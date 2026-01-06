@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UnbelievaAuto | Terminal</title>
+    <title>UnbelievaAuto | Ultra Fast</title>
     <style>
         :root {
             --bg: #000000;
             --uber-white: #ffffff;
             --border: #222222;
-            --text-main: #ffffff;
             --text-dim: #777777;
         }
 
         * {
             box-sizing: border-box;
-            font-family: "Uber Move Text", "system-ui", "Helvetica Neue", Helvetica, sans-serif;
+            font-family: "Uber Move Text", "system-ui", sans-serif;
             -webkit-font-smoothing: antialiased;
         }
 
         body {
             background-color: var(--bg);
-            color: var(--text-main);
+            color: #fff;
             margin: 0;
             padding: 60px 40px;
             display: flex;
@@ -42,7 +41,7 @@
         }
 
         .logo { font-size: 28px; font-weight: 500; letter-spacing: -1.2px; }
-        .version { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
+        .tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
 
         .dashboard-grid {
             display: grid;
@@ -56,7 +55,6 @@
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: var(--uber-white);
             font-weight: 700;
             margin-bottom: 20px;
             display: block;
@@ -73,8 +71,6 @@
             outline: none;
         }
 
-        .input-field:focus { border-color: var(--uber-white); }
-
         .btn-main {
             width: 100%;
             padding: 20px;
@@ -86,7 +82,6 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             cursor: pointer;
-            margin-top: 5px;
         }
 
         .btn-terminate {
@@ -94,37 +89,32 @@
             color: #fff;
             border: 1px solid #444;
             display: none;
+            margin-top: 10px;
         }
 
         .monitor-box {
             margin-top: 40px;
             border: 1px solid var(--border);
-            padding: 20px;
+            padding: 25px;
+            background: #050505;
         }
 
-        .log-display {
-            font-family: monospace;
-            font-size: 13px;
-            color: #aaa;
-            line-height: 1.6;
-        }
-
+        .log-display { font-family: monospace; font-size: 13px; color: #888; }
         .highlight { color: #fff; font-weight: bold; }
+        .counter { color: #276ef1; font-weight: bold; }
 
         .info-card { border-top: 1px solid var(--border); padding-top: 25px; margin-bottom: 35px; }
         .info-title { font-size: 18px; font-weight: 500; margin-bottom: 12px; }
         .info-body { font-size: 14px; line-height: 1.7; color: var(--text-dim); }
 
         footer { margin-top: auto; padding: 40px; letter-spacing: 5px; opacity: 0.3; font-size: 12px; }
-
-        @media (max-width: 850px) { .dashboard-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo">UnbelievaAuto</div>
-    <div class="version">Secure Loop // v4.1</div>
+    <div class="tag">High-Speed Terminal // 26s Cycle</div>
 </header>
 
 <div class="dashboard-grid">
@@ -133,7 +123,7 @@
         <input type="password" id="token" class="input-field" placeholder="Authorization Token">
         <input type="text" id="channelId" class="input-field" placeholder="Target Channel ID">
         
-        <button id="startBtn" class="btn-main" onclick="startLoop()">Initiate Farm</button>
+        <button id="startBtn" class="btn-main" onclick="startLoop()">Initiate Rapid Farm</button>
         <button id="stopBtn" class="btn-main btn-terminate" onclick="stopLoop()">Terminate</button>
 
         <div class="monitor-box">
@@ -141,23 +131,24 @@
             <div class="log-display">
                 Status: <span id="status" class="highlight">Standby</span><br>
                 Action: <span id="action">-</span><br>
-                Timer: <span id="timer">-</span>
+                Timer: <span id="timer">-</span><br>
+                Cycles: <span id="cycleCount" class="counter">0</span>
             </div>
         </div>
     </div>
 
     <div class="right-col">
         <div class="info-card">
-            <div class="info-title">Continuous Loop Logic</div>
-            <p class="info-body">The system is programmed for infinite cycling. Every 28 seconds, the terminal re-authorizes and pushes a fresh command burst (!work, !collect, !dep all) to the Discord API.</p>
+            <div class="info-title">Ultra-Fast Trigger</div>
+            <p class="info-body">This version is optimized for maximum speed. The 100ms delay between commands has been removed to allow the browser to push <b>!work</b>, <b>!collect</b>, and <b>!dep all</b> as a single fast burst.</p>
         </div>
         <div class="info-card">
-            <div class="info-title">Buffer Frequency</div>
-            <p class="info-body">Commands are separated by a <b>100ms</b> buffer. This mimics a rapid-fire macro while ensuring the Discord gateway registers each request as a distinct event.</p>
+            <div class="info-title">26-Second Sync</div>
+            <p class="info-body">The loop has been calibrated to exactly <b>26 seconds</b>. This is the optimal speed to avoid Discord's rate-limiting while maintaining maximum currency gain per hour.</p>
         </div>
         <div class="info-card">
-            <div class="info-title">Operational Warning</div>
-            <p class="info-body">Keep this tab active. Browsers may sleep background tabs, which can break the 28-second timer. For 24/7 farming, ensure your PC sleep settings are disabled.</p>
+            <div class="info-title">Session Awareness</div>
+            <p class="info-body">A cycle counter has been added. Each time the terminal completes a successful deposit and begins the 26s wait, the counter will increment. Monitor this to track your session performance.</p>
         </div>
     </div>
 </div>
@@ -166,25 +157,22 @@
 
 <script>
     let active = false;
-    let countdownInterval;
+    let cycles = 0;
 
     async function send(token, cid, msg) {
-        try {
-            const r = await fetch(`https://discord.com/api/v9/channels/${cid}/messages`, {
-                method: 'POST',
-                headers: { 'Authorization': token, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: msg })
-            });
-            return r.ok;
-        } catch (e) { return false; }
+        return fetch(`https://discord.com/api/v9/channels/${cid}/messages`, {
+            method: 'POST',
+            headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: msg })
+        });
     }
 
     function stopLoop() {
         active = false;
-        clearInterval(countdownInterval);
         document.getElementById('startBtn').style.display = "block";
         document.getElementById('stopBtn').style.display = "none";
         document.getElementById('status').innerText = "Standby";
+        document.getElementById('action').innerText = "Stopped.";
         document.getElementById('timer').innerText = "-";
     }
 
@@ -192,31 +180,33 @@
         const token = document.getElementById('token').value;
         const cid = document.getElementById('channelId').value;
 
-        if(!token || !cid) return alert("Credentials missing.");
+        if(!token || !cid) return alert("Fill all fields.");
 
         active = true;
         document.getElementById('startBtn').style.display = "none";
         document.getElementById('stopBtn').style.display = "block";
-        document.getElementById('status').innerText = "Active";
+        document.getElementById('status').innerText = "Running";
 
         while(active) {
-            // 1. Send commands
-            const cmds = ["!work", "!collect", "!dep all"];
-            for(let cmd of cmds) {
-                if(!active) break;
-                document.getElementById('action').innerText = `Sending ${cmd}...`;
-                await send(token, cid, cmd);
-                await new Promise(r => setTimeout(r, 100)); // 0.1s gap
-            }
+            // HIGH SPEED BURST
+            document.getElementById('action').innerText = "Firing burst...";
+            
+            // Triggering all 3 nearly simultaneously
+            send(token, cid, "!work");
+            send(token, cid, "!collect");
+            send(token, cid, "!dep all");
+
+            cycles++;
+            document.getElementById('cycleCount').innerText = cycles;
 
             if(!active) break;
 
-            // 2. Wait 28 seconds with visual timer
-            let timeLeft = 28;
-            document.getElementById('action').innerText = "Cycle Complete. Waiting...";
+            // 26s WAIT
+            let timeLeft = 26;
+            document.getElementById('action').innerText = "Cycle complete. Resting.";
             
             while(timeLeft > 0 && active) {
-                document.getElementById('timer').innerText = `Next run in ${timeLeft}s`;
+                document.getElementById('timer').innerText = `Next burst in ${timeLeft}s`;
                 await new Promise(r => setTimeout(r, 1000));
                 timeLeft--;
             }

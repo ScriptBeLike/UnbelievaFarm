@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UnbelievaAuto | Terminal</title>
+    <style>
+        :root {
+            --bg: #000000;
+            --uber-white: #ffffff;
+            --border: #222222;
+            --text-main: #ffffff;
+            --text-dim: #777777;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: "Uber Move Text", "system-ui", "Helvetica Neue", Helvetica, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            max-width: 1100px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 25px;
+            margin-bottom: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .logo { font-size: 28px; font-weight: 500; letter-spacing: -1.2px; }
+        .version { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 50px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--uber-white);
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            background: #000;
+            border: 1px solid var(--border);
+            padding: 18px;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+
+        .input-field:focus { border-color: var(--uber-white); }
+
+        .btn-main {
+            width: 100%;
+            padding: 20px;
+            background: var(--uber-white);
+            color: var(--bg);
+            border: none;
+            font-weight: 700;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .btn-terminate {
+            background: transparent;
+            color: #fff;
+            border: 1px solid #444;
+            display: none;
+        }
+
+        .monitor-box {
+            margin-top: 40px;
+            border: 1px solid var(--border);
+            padding: 20px;
+        }
+
+        .log-display {
+            font-family: monospace;
+            font-size: 13px;
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        .highlight { color: #fff; font-weight: bold; }
+
+        .info-card { border-top: 1px solid var(--border); padding-top: 25px; margin-bottom: 35px; }
+        .info-title { font-size: 18px; font-weight: 500; margin-bottom: 12px; }
+        .info-body { font-size: 14px; line-height: 1.7; color: var(--text-dim); }
+
+        footer { margin-top: auto; padding: 40px; letter-spacing: 5px; opacity: 0.3; font-size: 12px; }
+
+        @media (max-width: 850px) { .dashboard-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">UnbelievaAuto</div>
+    <div class="version">Secure Loop // v4.1</div>
+</header>
+
+<div class="dashboard-grid">
+    <div class="left-col">
+        <span class="section-label">Terminal Config</span>
+        <input type="password" id="token" class="input-field" placeholder="Authorization Token">
+        <input type="text" id="channelId" class="input-field" placeholder="Target Channel ID">
+        
+        <button id="startBtn" class="btn-main" onclick="startLoop()">Initiate Farm</button>
+        <button id="stopBtn" class="btn-main btn-terminate" onclick="stopLoop()">Terminate</button>
+
+        <div class="monitor-box">
+            <span class="section-label">Live Monitor</span>
+            <div class="log-display">
+                Status: <span id="status" class="highlight">Standby</span><br>
+                Action: <span id="action">-</span><br>
+                Timer: <span id="timer">-</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="right-col">
+        <div class="info-card">
+            <div class="info-title">Continuous Loop Logic</div>
+            <p class="info-body">The system is programmed for infinite cycling. Every 28 seconds, the terminal re-authorizes and pushes a fresh command burst (!work, !collect, !dep all) to the Discord API.</p>
+        </div>
+        <div class="info-card">
+            <div class="info-title">Buffer Frequency</div>
+            <p class="info-body">Commands are separated by a <b>100ms</b> buffer. This mimics a rapid-fire macro while ensuring the Discord gateway registers each request as a distinct event.</p>
+        </div>
+        <div class="info-card">
+            <div class="info-title">Operational Warning</div>
+            <p class="info-body">Keep this tab active. Browsers may sleep background tabs, which can break the 28-second timer. For 24/7 farming, ensure your PC sleep settings are disabled.</p>
+        </div>
+    </div>
+</div>
+
+<footer>Made by : Tera</footer>
+
+<script>
+    let active = false;
+    let countdownInterval;
+
+    async function send(token, cid, msg) {
+        try {
+            const r = await fetch(`https://discord.com/api/v9/channels/${cid}/messages`, {
+                method: 'POST',
+                headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: msg })
+            });
+            return r.ok;
+        } catch (e) { return false; }
+    }
+
+    function stopLoop() {
+        active = false;
+        clearInterval(countdownInterval);
+        document.getElementById('startBtn').style.display = "block";
+        document.getElementById('stopBtn').style.display = "none";
+        document.getElementById('status').innerText = "Standby";
+        document.getElementById('timer').innerText = "-";
+    }
+
+    async function startLoop() {
+        const token = document.getElementById('token').value;
+        const cid = document.getElementById('channelId').value;
+
+        if(!token || !cid) return alert("Credentials missing.");
+
+        active = true;
+        document.getElementById('startBtn').style.display = "none";
+        document.getElementById('stopBtn').style.display = "block";
+        document.getElementById('status').innerText = "Active";
+
+        while(active) {
+            // 1. Send commands
+            const cmds = ["!work", "!collect", "!dep all"];
+            for(let cmd of cmds) {
+                if(!active) break;
+                document.getElementById('action').innerText = `Sending ${cmd}...`;
+                await send(token, cid, cmd);
+                await new Promise(r => setTimeout(r, 100)); // 0.1s gap
+            }
+
+            if(!active) break;
+
+            // 2. Wait 28 seconds with visual timer
+            let timeLeft = 28;
+            document.getElementById('action').innerText = "Cycle Complete. Waiting...";
+            
+            while(timeLeft > 0 && active) {
+                document.getElementById('timer').innerText = `Next run in ${timeLeft}s`;
+                await new Promise(r => setTimeout(r, 1000));
+                timeLeft--;
+            }
+        }
+    }
+</script>
+
+</body>
+</html>

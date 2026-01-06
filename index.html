@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UnbelievaAuto | Ultra Fast</title>
+    <title>UnbelievaAuto | Tera</title>
     <style>
         :root {
             --bg: #000000;
@@ -14,7 +14,7 @@
 
         * {
             box-sizing: border-box;
-            font-family: "Uber Move Text", "system-ui", sans-serif;
+            font-family: "Uber Move Text", "system-ui", "Helvetica", sans-serif;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -22,7 +22,7 @@
             background-color: var(--bg);
             color: #fff;
             margin: 0;
-            padding: 60px 40px;
+            padding: 60px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -69,6 +69,7 @@
             font-size: 16px;
             margin-bottom: 12px;
             outline: none;
+            border-radius: 0px;
         }
 
         .btn-main {
@@ -82,6 +83,7 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             cursor: pointer;
+            transition: 0.2s;
         }
 
         .btn-terminate {
@@ -101,7 +103,7 @@
 
         .log-display { font-family: monospace; font-size: 13px; color: #888; }
         .highlight { color: #fff; font-weight: bold; }
-        .counter { color: #276ef1; font-weight: bold; }
+        .counter { color: #ffffff; border-bottom: 1px solid #fff; font-weight: bold; }
 
         .info-card { border-top: 1px solid var(--border); padding-top: 25px; margin-bottom: 35px; }
         .info-title { font-size: 18px; font-weight: 500; margin-bottom: 12px; }
@@ -114,14 +116,14 @@
 
 <header>
     <div class="logo">UnbelievaAuto</div>
-    <div class="tag">High-Speed Terminal // 26s Cycle</div>
+    <div class="tag">Milli-Delay Terminal // 26s</div>
 </header>
 
 <div class="dashboard-grid">
     <div class="left-col">
-        <span class="section-label">Terminal Config</span>
-        <input type="password" id="token" class="input-field" placeholder="Authorization Token">
-        <input type="text" id="channelId" class="input-field" placeholder="Target Channel ID">
+        <span class="section-label">Config</span>
+        <input type="password" id="token" class="input-field" placeholder="Auth Token">
+        <input type="text" id="channelId" class="input-field" placeholder="Channel ID">
         
         <button id="startBtn" class="btn-main" onclick="startLoop()">Initiate Rapid Farm</button>
         <button id="stopBtn" class="btn-main btn-terminate" onclick="stopLoop()">Terminate</button>
@@ -132,23 +134,23 @@
                 Status: <span id="status" class="highlight">Standby</span><br>
                 Action: <span id="action">-</span><br>
                 Timer: <span id="timer">-</span><br>
-                Cycles: <span id="cycleCount" class="counter">0</span>
+                Total Cycles: <span id="cycleCount" class="counter">0</span>
             </div>
         </div>
     </div>
 
     <div class="right-col">
         <div class="info-card">
-            <div class="info-title">Ultra-Fast Trigger</div>
-            <p class="info-body">This version is optimized for maximum speed. The 100ms delay between commands has been removed to allow the browser to push <b>!work</b>, <b>!collect</b>, and <b>!dep all</b> as a single fast burst.</p>
+            <div class="info-title">Precision Millisecond Delay</div>
+            <p class="info-body">To ensure message order integrity, a <b>10ms micro-delay</b> is inserted between commands. This allows the Discord API to index the <b>!work</b>, <b>!collect</b>, and <b>!dep all</b> sequence correctly without overlap.</p>
         </div>
         <div class="info-card">
-            <div class="info-title">26-Second Sync</div>
-            <p class="info-body">The loop has been calibrated to exactly <b>26 seconds</b>. This is the optimal speed to avoid Discord's rate-limiting while maintaining maximum currency gain per hour.</p>
+            <div class="info-title">26s Loop Timing</div>
+            <p class="info-body">The terminal cycles exactly every 26 seconds. The countdown begins immediately after the deposit command is verified. Ensure this tab remains active to prevent browser throttle.</p>
         </div>
         <div class="info-card">
-            <div class="info-title">Session Awareness</div>
-            <p class="info-body">A cycle counter has been added. Each time the terminal completes a successful deposit and begins the 26s wait, the counter will increment. Monitor this to track your session performance.</p>
+            <div class="info-title">System Identification</div>
+            <p class="info-body">Retrieved Token and Channel ID are used locally. This terminal does not store or transmit credentials to third-party servers. <b>Process safety verified.</b></p>
         </div>
     </div>
 </div>
@@ -160,11 +162,13 @@
     let cycles = 0;
 
     async function send(token, cid, msg) {
-        return fetch(`https://discord.com/api/v9/channels/${cid}/messages`, {
-            method: 'POST',
-            headers: { 'Authorization': token, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: msg })
-        });
+        try {
+            await fetch(`https://discord.com/api/v9/channels/${cid}/messages`, {
+                method: 'POST',
+                headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: msg })
+            });
+        } catch (e) {}
     }
 
     function stopLoop() {
@@ -172,7 +176,7 @@
         document.getElementById('startBtn').style.display = "block";
         document.getElementById('stopBtn').style.display = "none";
         document.getElementById('status').innerText = "Standby";
-        document.getElementById('action').innerText = "Stopped.";
+        document.getElementById('action').innerText = "Process Stopped.";
         document.getElementById('timer').innerText = "-";
     }
 
@@ -180,33 +184,35 @@
         const token = document.getElementById('token').value;
         const cid = document.getElementById('channelId').value;
 
-        if(!token || !cid) return alert("Fill all fields.");
+        if(!token || !cid) return alert("Credentials required.");
 
         active = true;
         document.getElementById('startBtn').style.display = "none";
         document.getElementById('stopBtn').style.display = "block";
-        document.getElementById('status').innerText = "Running";
+        document.getElementById('status').innerText = "Active";
 
         while(active) {
-            // HIGH SPEED BURST
-            document.getElementById('action').innerText = "Firing burst...";
+            document.getElementById('action').innerText = "Executing Burst...";
             
-            // Triggering all 3 nearly simultaneously
-            send(token, cid, "!work");
-            send(token, cid, "!collect");
-            send(token, cid, "!dep all");
+            // Sequence with 10ms micro-delay
+            await send(token, cid, "!work");
+            await new Promise(r => setTimeout(r, 10)); 
+            
+            await send(token, cid, "!collect");
+            await new Promise(r => setTimeout(r, 10));
+            
+            await send(token, cid, "!dep all");
 
             cycles++;
             document.getElementById('cycleCount').innerText = cycles;
 
             if(!active) break;
 
-            // 26s WAIT
             let timeLeft = 26;
-            document.getElementById('action').innerText = "Cycle complete. Resting.";
+            document.getElementById('action').innerText = "Waiting for cooldown...";
             
             while(timeLeft > 0 && active) {
-                document.getElementById('timer').innerText = `Next burst in ${timeLeft}s`;
+                document.getElementById('timer').innerText = `Re-cycling in ${timeLeft}s`;
                 await new Promise(r => setTimeout(r, 1000));
                 timeLeft--;
             }

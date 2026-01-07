@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UnbelievaAuto | California</title>
+    <title>UnbelievaAuto | California v10</title>
     <style>
         :root {
             --blue: #007AFF;
             --bg: #F5F5F7;
-            --card: rgba(255, 255, 255, 0.85);
+            --card: rgba(255, 255, 255, 0.9);
             --text: #1d1d1f;
             --muted: #86868b;
         }
 
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; transition: all 0.2s ease-out; }
 
         body, html {
             margin: 0; padding: 0; height: 100%; width: 100%;
@@ -42,74 +42,63 @@
         /* --- MAIN UI --- */
         .app-shell {
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 300px 1fr;
             height: 100vh;
             width: 100vw;
         }
 
-        /* Sidebar Navigation */
         nav {
-            background: rgba(232, 232, 237, 0.5);
-            backdrop-filter: blur(20px);
+            background: rgba(240, 240, 243, 0.6);
+            backdrop-filter: blur(30px);
             padding: 40px 24px;
             border-right: 1px solid rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 25px;
         }
 
-        .brand { font-size: 20px; font-weight: 600; letter-spacing: -0.5px; }
+        .brand { font-size: 22px; font-weight: 700; letter-spacing: -0.8px; margin-bottom: 10px; }
 
-        .input-stack { display: flex; flex-direction: column; gap: 15px; }
-        .field { display: flex; flex-direction: column; gap: 6px; }
-        label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .field-group { display: flex; flex-direction: column; gap: 15px; }
+        .field { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
         
         input {
             background: #fff; border: 1px solid #d2d2d7; border-radius: 10px;
-            padding: 10px 14px; font-size: 14px; outline: none;
+            padding: 12px; font-size: 14px; outline: none;
         }
         input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
 
-        /* Dashboard */
-        main {
-            padding: 60px;
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-        }
+        main { padding: 60px; display: flex; flex-direction: column; gap: 40px; }
+        h2 { font-size: 34px; font-weight: 700; margin: 0; letter-spacing: -1.2px; }
 
-        .dash-header h2 { font-size: 34px; font-weight: 700; margin: 0; letter-spacing: -1px; }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        
+        .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
         .stat-card {
             background: var(--card); backdrop-filter: blur(20px);
-            border-radius: 20px; padding: 30px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.03);
-            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 24px; padding: 35px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.04);
+            border: 1px solid rgba(255,255,255,0.8);
         }
 
-        .stat-card h3 { margin: 0; font-size: 13px; font-weight: 600; color: var(--muted); }
-        .stat-card .val { font-size: 48px; font-weight: 700; margin-top: 10px; letter-spacing: -2px; }
+        .stat-card h3 { margin: 0; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+        .stat-card .val { font-size: 54px; font-weight: 800; margin-top: 10px; letter-spacing: -2px; color: var(--text); }
 
-        /* Action Bar */
-        .controls { margin-top: auto; display: flex; flex-direction: column; gap: 12px; }
         .btn {
-            width: 100%; padding: 14px; border-radius: 12px; font-weight: 600; 
-            font-size: 15px; border: none; cursor: pointer;
+            width: 100%; padding: 16px; border-radius: 14px; font-weight: 600; 
+            font-size: 16px; border: none; cursor: pointer; margin-top: 10px;
         }
-        .btn-run { background: var(--blue); color: #fff; }
-        .btn-run:hover { background: #0066d6; transform: translateY(-1px); }
-        .btn-stop { background: #e8e8ed; color: #ff3b30; display: none; }
+        .btn-blue { background: var(--blue); color: #fff; }
+        .btn-blue:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-stop { background: #E8E8ED; color: #FF3B30; display: none; }
 
-        .log-panel {
-            background: var(--card); padding: 15px 25px; border-radius: 16px;
-            font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 10px;
+        .log-box {
+            background: #fff; padding: 20px; border-radius: 18px;
+            font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
         }
-        .pulse { width: 8px; height: 8px; background: var(--blue); border-radius: 50%; opacity: 0; }
-        .running .pulse { animation: pulse 1.5s infinite; opacity: 1; }
-        
-        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #d2d2d7; }
+        .active .dot { background: var(--blue); animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
     </style>
 </head>
 <body>
@@ -120,10 +109,10 @@
         <nav>
             <div class="brand">UnbelievaAuto</div>
             
-            <div class="input-stack">
+            <div class="field-group">
                 <div class="field">
-                    <label>Token</label>
-                    <input type="password" id="token" placeholder="Authorization">
+                    <label>Auth Token</label>
+                    <input type="password" id="token" placeholder="Required">
                 </div>
                 <div class="field">
                     <label>Channel ID</label>
@@ -135,120 +124,130 @@
                 </div>
             </div>
 
-            <div class="controls">
-                <button class="btn btn-run" id="startBtn" onclick="init()">Initiate Session</button>
-                <button class="btn btn-stop" id="stopBtn" onclick="kill()">End Session</button>
+            <div style="margin-top: auto;">
+                <button class="btn btn-blue" id="startBtn" onclick="engage()">Initiate Farm</button>
+                <button class="btn btn-stop" id="stopBtn" onclick="halt()">Stop Session</button>
             </div>
         </nav>
 
-        <main id="mainView">
-            <div class="dash-header">
-                <h2>Productivity Dashboard</h2>
-            </div>
+        <main>
+            <h2>California Engine</h2>
 
-            <div class="stats-grid">
+            <div class="stats">
                 <div class="stat-card">
-                    <h3>Cooldown Status</h3>
+                    <h3>Work Cooldown</h3>
                     <div id="timer" class="val" style="color: var(--blue);">00.0s</div>
                 </div>
                 <div class="stat-card">
-                    <h3>Successful Cycles</h3>
+                    <h3>Total Profit Cycles</h3>
                     <div id="cycles" class="val">0</div>
                 </div>
             </div>
 
-            <div class="log-panel" id="statusContainer">
-                <div class="pulse"></div>
-                <span id="log">System is standby. Ready to farm.</span>
+            <div class="log-box" id="statusBox">
+                <div class="dot"></div>
+                <span id="log">System Standby...</span>
             </div>
         </main>
     </div>
 
     <script>
         // Intro Animation
-        const text = "UnbelievaAuto";
+        const title = "UnbelievaAuto";
         const intro = document.getElementById('intro');
-        text.split('').forEach((l, i) => {
+        title.split('').forEach((char, i) => {
             const s = document.createElement('span');
-            s.textContent = l;
+            s.textContent = char;
             s.style.animationDelay = `${i * 0.08}s`;
             intro.appendChild(s);
         });
 
-        // Farm Engine
-        let active = false;
-        let cycleCount = 0;
+        let farming = false;
+        let count = 0;
 
-        const CONFIG = {
-            appId: "292953664492929025",
+        const DEFS = {
+            app: "292953664492929025",
             session: "43c7f2a6ccf5a143bfbb9196c456b071",
             work: { id: "901118136529588281", ver: "973314412968562777" },
             collect: { id: "901118136529588278", ver: "973314412968562774" },
             deposit: { id: "901118136529588275", ver: "973314412968562769" }
         };
 
-        async function discordRequest(token, gId, cId, cmd, data, opt = []) {
+        async function send(token, g, c, name, data, options = []) {
             try {
                 await fetch('https://discord.com/api/v9/interactions', {
                     method: 'POST',
                     headers: { 'Authorization': token, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        type: 2, application_id: CONFIG.appId, guild_id: gId, channel_id: cId,
-                        session_id: CONFIG.session,
-                        data: { version: data.ver, id: data.id, name: cmd, type: 1, options: opt }
+                        type: 2,
+                        application_id: DEFS.app,
+                        guild_id: g,
+                        channel_id: c,
+                        session_id: DEFS.session,
+                        data: {
+                            version: data.ver,
+                            id: data.id,
+                            name: name,
+                            type: 1,
+                            options: options
+                        }
                     })
                 });
-            } catch (e) {}
+            } catch (err) { console.error(err); }
         }
 
-        function logger(m) { document.getElementById('log').innerText = m; }
+        function updateLog(msg) { document.getElementById('log').innerText = msg; }
 
-        function kill() {
-            active = false;
+        function halt() {
+            farming = false;
             document.getElementById('startBtn').style.display = "block";
             document.getElementById('stopBtn').style.display = "none";
-            document.getElementById('statusContainer').classList.remove('running');
-            logger("Session ended.");
+            document.getElementById('statusBox').classList.remove('active');
+            updateLog("Session terminated.");
         }
 
-        async function init() {
+        async function engage() {
             const token = document.getElementById('token').value;
-            const gID = document.getElementById('guildId').value;
-            const cID = document.getElementById('channelId').value;
+            const g = document.getElementById('guildId').value;
+            const c = document.getElementById('channelId').value;
             
-            if(!token) return alert("Security Token Required");
+            if(!token) return alert("Token Required");
 
-            active = true;
+            farming = true;
             document.getElementById('startBtn').style.display = "none";
             document.getElementById('stopBtn').style.display = "block";
-            document.getElementById('statusContainer').classList.add('running');
+            document.getElementById('statusBox').classList.add('active');
 
-            while(active) {
-                // 1. Work triggers, and target is set immediately
-                let target = Date.now() + 26100;
-                logger("Requesting /work...");
-                await discordRequest(token, gID, cID, "work", CONFIG.work);
+            while(farming) {
+                // 1. WORK Starts the 26s Cooldown immediately
+                let cooldownEnd = Date.now() + 26100;
+                updateLog("Firing /work...");
+                await send(token, g, c, "work", DEFS.work);
 
-                // 2. Wait 0.1s
+                // 2. WAIT 0.1s
                 await new Promise(r => setTimeout(r, 100));
 
-                // 3. Collect
-                logger("Requesting /collect-income...");
-                await discordRequest(token, gID, cID, "collect-income", CONFIG.collect);
+                // 3. COLLECT
+                updateLog("Firing /collect-income...");
+                await send(token, g, c, "collect-income", DEFS.collect);
 
-                // 4. Wait 0.1s
+                // 4. WAIT 0.1s
                 await new Promise(r => setTimeout(r, 100));
 
-                // 5. Deposit
-                logger("Requesting /deposit...");
-                await discordRequest(token, gID, cID, "deposit", CONFIG.deposit, [{type: 3, name: "amount", value: "all"}]);
+                // 5. DEPOSIT (Corrected with 'amount' option)
+                updateLog("Firing /deposit all...");
+                await send(token, g, c, "deposit", DEFS.deposit, [{
+                    type: 3, 
+                    name: "amount", 
+                    value: "all"
+                }]);
 
-                cycleCount++;
-                document.getElementById('cycles').innerText = cycleCount;
+                count++;
+                document.getElementById('cycles').innerText = count;
 
-                // 6. Monitor cooldown remainder
-                while(Date.now() < target && active) {
-                    let rem = ((target - Date.now()) / 1000).toFixed(1);
+                // 6. Monitor the 26s timer
+                while(Date.now() < cooldownEnd && farming) {
+                    let rem = ((cooldownEnd - Date.now()) / 1000).toFixed(1);
                     document.getElementById('timer').innerText = rem + "s";
                     await new Promise(r => setTimeout(r, 50));
                 }

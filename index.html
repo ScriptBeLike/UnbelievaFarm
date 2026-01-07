@@ -5,226 +5,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UnbelievaAuto v2</title>
     <style>
-        :root {
-            --bg: #000000;
-            --card: #080808;
-            --uber-white: #ffffff;
-            --uber-gray: #555555;
-            --border: #1a1a1a;
-        }
-
-        * { box-sizing: border-box; font-family: "Uber Move Text", "system-ui", sans-serif; -webkit-font-smoothing: antialiased; }
-        
-        body { 
-            background-color: var(--bg); 
-            color: var(--uber-white); 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh;
-        }
-
-        .terminal {
-            width: 100%;
-            max-width: 460px;
-            padding: 40px;
-            background: var(--bg);
-        }
-
-        header {
-            border-bottom: 1px solid var(--uber-white);
-            padding-bottom: 20px;
-            margin-bottom: 40px;
-        }
-
-        .title-group { display: flex; align-items: baseline; gap: 10px; }
-        h1 { font-size: 28px; font-weight: 500; margin: 0; letter-spacing: -1px; }
-        .v2-tag { font-size: 10px; font-weight: 800; color: var(--uber-gray); text-transform: uppercase; letter-spacing: 2px; }
-
+        :root { --bg: #000; --card: #080808; --uber-white: #fff; --uber-gray: #444; }
+        * { box-sizing: border-box; font-family: "Uber Move", sans-serif; -webkit-font-smoothing: antialiased; }
+        body { background: var(--bg); color: #fff; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .terminal { width: 440px; padding: 40px; background: var(--bg); border: 1px solid #111; }
+        header { border-bottom: 2px solid #fff; padding-bottom: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: baseline; }
+        .v2-small { font-size: 10px; font-weight: 800; color: var(--uber-gray); text-transform: uppercase; letter-spacing: 2px; }
         .input-wrap { margin-bottom: 20px; }
-        label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--uber-gray); display: block; margin-bottom: 8px; }
-        
-        input { 
-            width: 100%; 
-            background: var(--card); 
-            border: 1px solid var(--border); 
-            color: #fff; 
-            padding: 18px; 
-            font-size: 15px; 
-            outline: none; 
-            transition: 0.3s;
-        }
-        input:focus { border-color: #fff; background: #0c0c0c; }
-
-        .btn-start { 
-            width: 100%; 
-            padding: 20px; 
-            background: #fff; 
-            color: #000; 
-            border: none; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            cursor: pointer; 
-            letter-spacing: 1.5px; 
-            transition: 0.2s;
-        }
-        .btn-start:hover { opacity: 0.8; }
-
-        .btn-stop { 
-            width: 100%; 
-            padding: 20px; 
-            background: transparent; 
-            border: 1px solid #333; 
-            color: #ff3b30; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            cursor: pointer; 
-            display: none; 
-            margin-top: 10px; 
-        }
-
-        .monitor { 
-            margin-top: 40px; 
-            padding: 25px; 
-            background: var(--card); 
-            border: 1px solid var(--border);
-        }
-
-        .stat { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; letter-spacing: 0.5px; }
-        .dim { color: var(--uber-gray); font-weight: 700; text-transform: uppercase; }
-        .bright { color: #fff; font-family: monospace; font-weight: 700; }
-        
-        #log { 
-            margin-top: 15px; 
-            font-family: monospace; 
-            font-size: 11px; 
-            color: #444; 
-            border-top: 1px solid #1a1a1a; 
-            padding-top: 10px;
-            height: 20px;
-            overflow: hidden;
-        }
-
-        .pulse { animation: pulse-red 2s infinite; }
-        @keyframes pulse-red { 0% { color: #fff; } 50% { color: #555; } 100% { color: #fff; } }
+        label { font-size: 10px; color: var(--uber-gray); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
+        input { width: 100%; background: var(--card); border: 1px solid #1a1a1a; color: #fff; padding: 16px; font-size: 14px; outline: none; }
+        input:focus { border-color: #fff; }
+        .btn-launch { width: 100%; padding: 20px; background: #fff; color: #000; font-weight: 700; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; }
+        .dashboard { margin-top: 35px; border-top: 1px solid #111; padding-top: 20px; }
+        .row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; }
+        .label-dim { color: var(--uber-gray); font-weight: 700; text-transform: uppercase; }
+        .val-bright { font-family: monospace; font-weight: 700; }
+        #log { font-size: 11px; color: #555; text-align: center; margin-top: 15px; font-family: monospace; }
     </style>
 </head>
 <body>
 
 <div class="terminal">
     <header>
-        <div class="title-group">
-            <h1>UnbelievaAuto</h1>
-            <span class="v2-tag">v2</span>
-        </div>
+        <div style="font-size: 26px; font-weight: 500; letter-spacing: -1px;">UnbelievaAuto</div>
+        <span class="v2-small">v2</span>
     </header>
 
     <div class="input-wrap">
         <label>Access Token</label>
-        <input type="password" id="token" placeholder="Paste Token">
-    </div>
-    <div class="input-wrap">
-        <label>Channel ID</label>
-        <input type="text" id="channelId" placeholder="Paste ID">
+        <input type="password" id="token" placeholder="Authorization Token">
     </div>
 
-    <button id="startBtn" class="btn-start" onclick="init()">Launch Session</button>
-    <button id="stopBtn" class="btn-stop" onclick="stop()">Terminate</button>
+    <button class="btn-launch" onclick="startEngine()">Initiate Farm</button>
 
-    <div class="monitor">
-        <div class="stat">
-            <span class="dim">System Status</span>
-            <span id="status" class="bright">IDLE</span>
-        </div>
-        <div class="stat">
-            <span class="dim">Next Sequence</span>
-            <span id="timer" class="bright">-</span>
-        </div>
-        <div class="stat">
-            <span class="dim">Cycle Count</span>
-            <span id="cycles" class="bright">0</span>
-        </div>
-        <div id="log">Awaiting authentication...</div>
+    <div class="dashboard">
+        <div class="row"><span class="label-dim">System Status</span><span id="status" class="val-bright">IDLE</span></div>
+        <div class="row"><span class="label-dim">Next Sequence</span><span id="timer" class="val-bright">-</span></div>
+        <div class="row"><span class="label-dim">Cycles Completed</span><span id="cycles" class="val-bright">0</span></div>
+        <div id="log">Awaiting real-slash handshake...</div>
     </div>
 </div>
 
 <script>
-    let running = false;
+    let active = false;
     let cycleCount = 0;
 
-    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+    // DATA FROM YOUR PAYLOADS
+    const CONFIG = {
+        appId: "292953664492929025",
+        guildId: "1347804635989016617",
+        channelId: "1417962541702709258",
+        session: "43c7f2a6ccf5a143bfbb9196c456b071",
+        work: { id: "901118136529588281", ver: "973314412968562777" },
+        collect: { id: "901118136529588278", ver: "973314412968562774" },
+        deposit: { id: "901118136529588275", ver: "973314412968562769" }
+    };
 
-    async function discordSend(token, cid, msg) {
-        try {
-            await fetch(`https://discord.com/api/v9/channels/${cid}/messages`, {
-                method: 'POST',
-                headers: { 'Authorization': token, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: msg })
-            });
-        } catch (e) {}
+    async function discordInteraction(token, cmdName, cmdData, options = []) {
+        const payload = {
+            type: 2,
+            application_id: CONFIG.appId,
+            guild_id: CONFIG.guildId,
+            channel_id: CONFIG.channelId,
+            session_id: CONFIG.session,
+            data: {
+                version: cmdData.ver,
+                id: cmdData.id,
+                name: cmdName,
+                type: 1,
+                options: options
+            }
+        };
+
+        return fetch('https://discord.com/api/v9/interactions', {
+            method: 'POST',
+            headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
     }
 
-    function log(m) { document.getElementById('log').innerText = m; }
-
-    async function runSequence() {
+    async function startEngine() {
         const token = document.getElementById('token').value;
-        const cid = document.getElementById('channelId').value;
+        if(!token) return alert("Paste Token");
 
-        while(running) {
-            // 1. Start Work
-            log("Executing: /work");
-            await discordSend(token, cid, "/work");
+        active = true;
+        document.getElementById('status').innerText = "RUNNING";
+
+        while(active) {
+            // SEQUENCE START
+            document.getElementById('log').innerText = "Interacting: /work";
+            await discordInteraction(token, "work", CONFIG.work);
             
-            // 2. Wait 2 seconds (per instructions)
-            await sleep(2000);
+            await new Promise(r => setTimeout(r, 2000));
+
+            document.getElementById('log').innerText = "Interacting: /collect-income";
+            await discordInteraction(token, "collect-income", CONFIG.collect);
             
-            // 3. Collect
-            log("Executing: /collect-income");
-            await discordSend(token, cid, "/collect-income");
-            
-            // 4. Wait 2 seconds
-            await sleep(2000);
-            
-            // 5. Deposit
-            log("Executing: /deposit all");
-            await discordSend(token, cid, "/deposit all");
-            
+            await new Promise(r => setTimeout(r, 2000));
+
+            document.getElementById('log').innerText = "Interacting: /deposit all";
+            // Amount "all" is value 3 in UnbelievaBoat interactions
+            await discordInteraction(token, "deposit", CONFIG.deposit, [{type: 3, name: "amount", value: "all"}]);
+
             cycleCount++;
             document.getElementById('cycles').innerText = cycleCount;
 
-            // 6. 26 Second Cooldown
-            let target = Date.now() + 26000;
-            log("Sequence Complete. Cooling down.");
-            
-            while(Date.now() < target && running) {
-                let remain = ((target - Date.now()) / 1000).toFixed(1);
-                document.getElementById('timer').innerText = `${remain}s`;
-                await sleep(100);
+            // COOLDOWN (26.5s)
+            let nextRun = Date.now() + 26500;
+            while(Date.now() < nextRun && active) {
+                document.getElementById('log').innerText = "Sequence waiting...";
+                document.getElementById('timer').innerText = ((nextRun - Date.now()) / 1000).toFixed(1) + "s";
+                await new Promise(r => setTimeout(r, 100));
             }
         }
     }
-
-    function init() {
-        if(!document.getElementById('token').value || !document.getElementById('channelId').value) return;
-        running = true;
-        document.getElementById('startBtn').style.display = "none";
-        document.getElementById('stopBtn').style.display = "block";
-        document.getElementById('status').innerText = "RUNNING";
-        document.getElementById('status').classList.add('pulse');
-        runSequence();
-    }
-
-    function stop() {
-        running = false;
-        document.getElementById('startBtn').style.display = "block";
-        document.getElementById('stopBtn').style.display = "none";
-        document.getElementById('status').innerText = "IDLE";
-        document.getElementById('status').classList.remove('pulse');
-        document.getElementById('timer').innerText = "-";
-        log("Terminal Stopped.");
-    }
 </script>
-
 </body>
 </html>

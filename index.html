@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UnbelievaAuto v2</title>
+    <title>UnbelievaAuto v2.1</title>
     <style>
         :root {
             --bg: #000000;
@@ -11,7 +11,6 @@
             --uber-white: #ffffff;
             --uber-gray: #a6a6a6;
             --border: #333333;
-            --accent: #ffffff; /* Monochromatic Uber style */
         }
 
         * {
@@ -107,11 +106,7 @@
             transition: transform 0.1s;
         }
 
-        .btn-start {
-            background-color: var(--uber-white);
-            color: var(--bg);
-        }
-        
+        .btn-start { background-color: var(--uber-white); color: var(--bg); }
         .btn-start:hover { opacity: 0.9; }
 
         .btn-stop {
@@ -141,9 +136,7 @@
             font-weight: 700;
         }
 
-        .pulse {
-            animation: pulse-animation 2s infinite;
-        }
+        .pulse { animation: pulse-animation 2s infinite; }
 
         @keyframes pulse-animation {
             0% { opacity: 1; }
@@ -151,15 +144,14 @@
             100% { opacity: 1; }
         }
 
-        /* Tips for AFK */
-        .afk-warning {
+        .note {
             margin-top: 30px;
             font-size: 12px;
             color: #666;
-            line-height: 1.5;
             background: #0a0a0a;
             padding: 15px;
             border: 1px solid #222;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -168,7 +160,7 @@
     <div class="container">
         <header>
             <h1>UnbelievaAuto</h1>
-            <span class="version">v2.0</span>
+            <span class="version">v2.1</span>
         </header>
 
         <div class="panel">
@@ -201,13 +193,13 @@
                 <span id="cycles" class="stat-val">0</span>
             </div>
              <div class="stat-row">
-                <span>LAST ACTION</span>
+                <span>LAST LOG</span>
                 <span id="log" class="stat-val" style="font-size: 11px;">-</span>
             </div>
         </div>
 
-        <div class="afk-warning">
-            <b>AFK MODE TIP:</b> To ensure 100% efficiency while AFK, allow this specific window to remain visible on your screen (even if small). Do not minimize it to the taskbar, as Windows puts minimized Chrome tabs to sleep.
+        <div class="note">
+            <b>NOTE:</b> This sends "/work" as text. If the bot ignores it, it means the server requires "Real Slash Interactions" (clickable commands), which this tool cannot simulate.
         </div>
     </div>
 
@@ -216,7 +208,6 @@
         let cycleCount = 0;
         let wakeLock = null;
 
-        // The Engine
         async function sendCommand(token, channelId, text) {
             try {
                 await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
@@ -228,7 +219,7 @@
                     body: JSON.stringify({ content: text })
                 });
             } catch (err) {
-                console.error("Failed to send", err);
+                console.error(err);
             }
         }
 
@@ -245,59 +236,56 @@
             document.getElementById('startBtn').style.display = "block";
             document.getElementById('stopBtn').style.display = "none";
             updateStatus("TERMINATED", "#cc0000");
-            document.getElementById('log').innerText = "Session Stopped";
+            document.getElementById('log').innerText = "Stopped by user";
         }
 
         async function startEngine() {
             const token = document.getElementById('token').value;
             const channelId = document.getElementById('channelId').value;
 
-            if (!token || !channelId) return alert("Missing Credentials");
+            if (!token || !channelId) return alert("Please enter Token and Channel ID");
 
-            // UI Setup
             isRunning = true;
             document.getElementById('startBtn').style.display = "none";
             document.getElementById('stopBtn').style.display = "block";
             updateStatus("RUNNING");
             
-            // Attempt to keep screen awake (Supported in Chrome/Edge)
             try {
                 if ('wakeLock' in navigator) {
                     wakeLock = await navigator.wakeLock.request('screen');
                 }
-            } catch (err) { console.log("WakeLock not supported"); }
+            } catch (err) {}
 
             while (isRunning) {
                 // --- EXECUTION PHASE ---
-                document.getElementById('log').innerText = ">>> EXECUTING BATCH";
+                document.getElementById('log').innerText = "Sending: /work...";
+                await sendCommand(token, channelId, "/work");
                 
-                // 1. Work
-                await sendCommand(token, channelId, "!work");
-                await new Promise(r => setTimeout(r, 200)); // 200ms ensure server processes 'work' first
+                await new Promise(r => setTimeout(r, 200)); 
                 
-                // 2. Collect
-                await sendCommand(token, channelId, "!collect");
-                await new Promise(r => setTimeout(r, 200)); // 200ms ensure 'collect' is distinct
+                document.getElementById('log').innerText = "Sending: /collect-income...";
+                await sendCommand(token, channelId, "/collect-income");
                 
-                // 3. Deposit
-                await sendCommand(token, channelId, "!dep all");
+                await new Promise(r => setTimeout(r, 200)); 
+                
+                document.getElementById('log').innerText = "Sending: /deposit all...";
+                await sendCommand(token, channelId, "/deposit all");
 
-                // Update Stats
                 cycleCount++;
                 document.getElementById('cycles').innerText = cycleCount;
 
-                // --- SMART WAITING PHASE ---
-                // We use Date.now() to prevent browser throttling drift
-                const waitDuration = 26000; // 26 seconds
+                // --- 26.5s COOLDOWN PHASE ---
+                // 26500 milliseconds = 26.5 seconds
+                const waitDuration = 26500; 
                 const targetTime = Date.now() + waitDuration;
 
                 while (Date.now() < targetTime && isRunning) {
-                    const timeLeft = Math.ceil((targetTime - Date.now()) / 1000);
+                    const timeLeft = Math.max(0, (targetTime - Date.now()) / 1000).toFixed(1);
                     document.getElementById('timer').innerText = `${timeLeft}s`;
-                    document.getElementById('log').innerText = "COOLDOWN...";
+                    document.getElementById('log').innerText = "Cooling down...";
                     
-                    // Check every 1 second
-                    await new Promise(r => setTimeout(r, 1000));
+                    // Update timer every 100ms for smooth decimals
+                    await new Promise(r => setTimeout(r, 100));
                 }
             }
         }

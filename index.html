@@ -3,222 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UnbelievaAuto | Tera</title>
+    <title>UnbelievaAuto v2</title>
     <style>
         :root {
             --bg: #000000;
+            --surface: #111111;
             --uber-white: #ffffff;
-            --border: #222222;
-            --text-dim: #777777;
+            --uber-gray: #a6a6a6;
+            --border: #333333;
+            --accent: #ffffff; /* Monochromatic Uber style */
         }
 
         * {
             box-sizing: border-box;
-            font-family: "Uber Move Text", "system-ui", "Helvetica", sans-serif;
+            font-family: "Uber Move Text", system-ui, -apple-system, sans-serif;
             -webkit-font-smoothing: antialiased;
         }
 
         body {
             background-color: var(--bg);
-            color: #fff;
+            color: var(--uber-white);
             margin: 0;
-            padding: 60px 20px;
+            padding: 0;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
             min-height: 100vh;
         }
 
-        header {
+        .container {
             width: 100%;
-            max-width: 1100px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 25px;
-            margin-bottom: 50px;
+            max-width: 480px;
+            padding: 40px;
+        }
+
+        header {
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--uber-white);
+            padding-bottom: 20px;
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
+            align-items: flex-end;
         }
 
-        .logo { font-size: 28px; font-weight: 500; letter-spacing: -1.2px; }
-        .tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 50px;
-            width: 100%;
-            max-width: 1100px;
+        h1 {
+            font-size: 32px;
+            font-weight: 500;
+            margin: 0;
+            letter-spacing: -1px;
+            line-height: 1;
         }
 
-        .section-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .version {
+            font-size: 14px;
             font-weight: 700;
-            margin-bottom: 20px;
-            display: block;
+            color: var(--uber-gray);
+            margin-bottom: 2px;
         }
 
-        .input-field {
+        .panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--uber-gray);
+            margin-left: 2px;
+        }
+
+        input {
             width: 100%;
-            background: #000;
+            background-color: var(--surface);
             border: 1px solid var(--border);
-            padding: 18px;
-            color: white;
+            color: var(--uber-white);
+            padding: 16px;
             font-size: 16px;
-            margin-bottom: 12px;
             outline: none;
-            border-radius: 0px;
+            transition: border-color 0.2s;
         }
 
-        .btn-main {
-            width: 100%;
-            padding: 20px;
-            background: var(--uber-white);
-            color: var(--bg);
-            border: none;
+        input:focus {
+            border-color: var(--uber-white);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 18px;
+            font-size: 16px;
             font-weight: 700;
-            font-size: 15px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            border: none;
             cursor: pointer;
-            transition: 0.2s;
+            transition: transform 0.1s;
         }
 
-        .btn-terminate {
-            background: transparent;
-            color: #fff;
-            border: 1px solid #444;
+        .btn-start {
+            background-color: var(--uber-white);
+            color: var(--bg);
+        }
+        
+        .btn-start:hover { opacity: 0.9; }
+
+        .btn-stop {
+            background-color: transparent;
+            border: 2px solid #cc0000;
+            color: #cc0000;
             display: none;
-            margin-top: 10px;
         }
 
-        .monitor-box {
+        .status-box {
             margin-top: 40px;
-            border: 1px solid var(--border);
-            padding: 25px;
-            background: #050505;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
         }
 
-        .log-display { font-family: monospace; font-size: 13px; color: #888; }
-        .highlight { color: #fff; font-weight: bold; }
-        .counter { color: #ffffff; border-bottom: 1px solid #fff; font-weight: bold; }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--uber-gray);
+        }
 
-        .info-card { border-top: 1px solid var(--border); padding-top: 25px; margin-bottom: 35px; }
-        .info-title { font-size: 18px; font-weight: 500; margin-bottom: 12px; }
-        .info-body { font-size: 14px; line-height: 1.7; color: var(--text-dim); }
+        .stat-val {
+            color: var(--uber-white);
+            font-family: monospace;
+            font-weight: 700;
+        }
 
-        footer { margin-top: auto; padding: 40px; letter-spacing: 5px; opacity: 0.3; font-size: 12px; }
+        .pulse {
+            animation: pulse-animation 2s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Tips for AFK */
+        .afk-warning {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+            background: #0a0a0a;
+            padding: 15px;
+            border: 1px solid #222;
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo">UnbelievaAuto</div>
-    <div class="tag">Milli-Delay Terminal // 26s</div>
-</header>
+    <div class="container">
+        <header>
+            <h1>UnbelievaAuto</h1>
+            <span class="version">v2.0</span>
+        </header>
 
-<div class="dashboard-grid">
-    <div class="left-col">
-        <span class="section-label">Config</span>
-        <input type="password" id="token" class="input-field" placeholder="Auth Token">
-        <input type="text" id="channelId" class="input-field" placeholder="Channel ID">
-        
-        <button id="startBtn" class="btn-main" onclick="startLoop()">Initiate Rapid Farm</button>
-        <button id="stopBtn" class="btn-main btn-terminate" onclick="stopLoop()">Terminate</button>
+        <div class="panel">
+            <div>
+                <label>Auth Token</label>
+                <input type="password" id="token" placeholder="Paste Discord Token">
+            </div>
+            <div>
+                <label>Channel ID</label>
+                <input type="text" id="channelId" placeholder="Paste Channel ID">
+            </div>
 
-        <div class="monitor-box">
-            <span class="section-label">Live Monitor</span>
-            <div class="log-display">
-                Status: <span id="status" class="highlight">Standby</span><br>
-                Action: <span id="action">-</span><br>
-                Timer: <span id="timer">-</span><br>
-                Total Cycles: <span id="cycleCount" class="counter">0</span>
+            <div class="btn-row">
+                <button id="startBtn" class="btn-start" onclick="startEngine()">START FARM</button>
+                <button id="stopBtn" class="btn-stop" onclick="stopEngine()">TERMINATE</button>
             </div>
         </div>
+
+        <div class="status-box">
+            <div class="stat-row">
+                <span>SYSTEM STATUS</span>
+                <span id="status" class="stat-val">IDLE</span>
+            </div>
+            <div class="stat-row">
+                <span>NEXT BATCH IN</span>
+                <span id="timer" class="stat-val">-</span>
+            </div>
+            <div class="stat-row">
+                <span>TOTAL CYCLES</span>
+                <span id="cycles" class="stat-val">0</span>
+            </div>
+             <div class="stat-row">
+                <span>LAST ACTION</span>
+                <span id="log" class="stat-val" style="font-size: 11px;">-</span>
+            </div>
+        </div>
+
+        <div class="afk-warning">
+            <b>AFK MODE TIP:</b> To ensure 100% efficiency while AFK, allow this specific window to remain visible on your screen (even if small). Do not minimize it to the taskbar, as Windows puts minimized Chrome tabs to sleep.
+        </div>
     </div>
 
-    <div class="right-col">
-        <div class="info-card">
-            <div class="info-title">Precision Millisecond Delay</div>
-            <p class="info-body">To ensure message order integrity, a <b>10ms micro-delay</b> is inserted between commands. This allows the Discord API to index the <b>!work</b>, <b>!collect</b>, and <b>!dep all</b> sequence correctly without overlap.</p>
-        </div>
-        <div class="info-card">
-            <div class="info-title">26s Loop Timing</div>
-            <p class="info-body">The terminal cycles exactly every 26 seconds. The countdown begins immediately after the deposit command is verified. Ensure this tab remains active to prevent browser throttle.</p>
-        </div>
-        <div class="info-card">
-            <div class="info-title">System Identification</div>
-            <p class="info-body">Retrieved Token and Channel ID are used locally. This terminal does not store or transmit credentials to third-party servers. <b>Process safety verified.</b></p>
-        </div>
-    </div>
-</div>
+    <script>
+        let isRunning = false;
+        let cycleCount = 0;
+        let wakeLock = null;
 
-<footer>Made by : Tera</footer>
-
-<script>
-    let active = false;
-    let cycles = 0;
-
-    async function send(token, cid, msg) {
-        try {
-            await fetch(`https://discord.com/api/v9/channels/${cid}/messages`, {
-                method: 'POST',
-                headers: { 'Authorization': token, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: msg })
-            });
-        } catch (e) {}
-    }
-
-    function stopLoop() {
-        active = false;
-        document.getElementById('startBtn').style.display = "block";
-        document.getElementById('stopBtn').style.display = "none";
-        document.getElementById('status').innerText = "Standby";
-        document.getElementById('action').innerText = "Process Stopped.";
-        document.getElementById('timer').innerText = "-";
-    }
-
-    async function startLoop() {
-        const token = document.getElementById('token').value;
-        const cid = document.getElementById('channelId').value;
-
-        if(!token || !cid) return alert("Credentials required.");
-
-        active = true;
-        document.getElementById('startBtn').style.display = "none";
-        document.getElementById('stopBtn').style.display = "block";
-        document.getElementById('status').innerText = "Active";
-
-        while(active) {
-            document.getElementById('action').innerText = "Executing Burst...";
-            
-            // Sequence with 10ms micro-delay
-            await send(token, cid, "!work");
-            await new Promise(r => setTimeout(r, 10)); 
-            
-            await send(token, cid, "!collect");
-            await new Promise(r => setTimeout(r, 10));
-            
-            await send(token, cid, "!dep all");
-
-            cycles++;
-            document.getElementById('cycleCount').innerText = cycles;
-
-            if(!active) break;
-
-            let timeLeft = 26;
-            document.getElementById('action').innerText = "Waiting for cooldown...";
-            
-            while(timeLeft > 0 && active) {
-                document.getElementById('timer').innerText = `Re-cycling in ${timeLeft}s`;
-                await new Promise(r => setTimeout(r, 1000));
-                timeLeft--;
+        // The Engine
+        async function sendCommand(token, channelId, text) {
+            try {
+                await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content: text })
+                });
+            } catch (err) {
+                console.error("Failed to send", err);
             }
         }
-    }
-</script>
 
+        function updateStatus(msg, color = "#fff") {
+            const el = document.getElementById('status');
+            el.innerText = msg;
+            el.style.color = color;
+            if(msg === "RUNNING") el.classList.add('pulse');
+            else el.classList.remove('pulse');
+        }
+
+        function stopEngine() {
+            isRunning = false;
+            document.getElementById('startBtn').style.display = "block";
+            document.getElementById('stopBtn').style.display = "none";
+            updateStatus("TERMINATED", "#cc0000");
+            document.getElementById('log').innerText = "Session Stopped";
+        }
+
+        async function startEngine() {
+            const token = document.getElementById('token').value;
+            const channelId = document.getElementById('channelId').value;
+
+            if (!token || !channelId) return alert("Missing Credentials");
+
+            // UI Setup
+            isRunning = true;
+            document.getElementById('startBtn').style.display = "none";
+            document.getElementById('stopBtn').style.display = "block";
+            updateStatus("RUNNING");
+            
+            // Attempt to keep screen awake (Supported in Chrome/Edge)
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                }
+            } catch (err) { console.log("WakeLock not supported"); }
+
+            while (isRunning) {
+                // --- EXECUTION PHASE ---
+                document.getElementById('log').innerText = ">>> EXECUTING BATCH";
+                
+                // 1. Work
+                await sendCommand(token, channelId, "!work");
+                await new Promise(r => setTimeout(r, 200)); // 200ms ensure server processes 'work' first
+                
+                // 2. Collect
+                await sendCommand(token, channelId, "!collect");
+                await new Promise(r => setTimeout(r, 200)); // 200ms ensure 'collect' is distinct
+                
+                // 3. Deposit
+                await sendCommand(token, channelId, "!dep all");
+
+                // Update Stats
+                cycleCount++;
+                document.getElementById('cycles').innerText = cycleCount;
+
+                // --- SMART WAITING PHASE ---
+                // We use Date.now() to prevent browser throttling drift
+                const waitDuration = 26000; // 26 seconds
+                const targetTime = Date.now() + waitDuration;
+
+                while (Date.now() < targetTime && isRunning) {
+                    const timeLeft = Math.ceil((targetTime - Date.now()) / 1000);
+                    document.getElementById('timer').innerText = `${timeLeft}s`;
+                    document.getElementById('log').innerText = "COOLDOWN...";
+                    
+                    // Check every 1 second
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
+        }
+    </script>
 </body>
 </html>

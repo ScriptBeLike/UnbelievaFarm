@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UnbelievaAuto v2.1</title>
+    <title>UnbelievaAuto v2.2</title>
     <style>
         :root {
             --bg: #000000;
@@ -86,9 +86,7 @@
             transition: border-color 0.2s;
         }
 
-        input:focus {
-            border-color: var(--uber-white);
-        }
+        input:focus { border-color: var(--uber-white); }
 
         .btn-row {
             display: flex;
@@ -103,18 +101,10 @@
             font-weight: 700;
             border: none;
             cursor: pointer;
-            transition: transform 0.1s;
         }
 
         .btn-start { background-color: var(--uber-white); color: var(--bg); }
-        .btn-start:hover { opacity: 0.9; }
-
-        .btn-stop {
-            background-color: transparent;
-            border: 2px solid #cc0000;
-            color: #cc0000;
-            display: none;
-        }
+        .btn-stop { background-color: transparent; border: 2px solid #cc0000; color: #cc0000; display: none; }
 
         .status-box {
             margin-top: 40px;
@@ -137,22 +127,9 @@
         }
 
         .pulse { animation: pulse-animation 2s infinite; }
-
-        @keyframes pulse-animation {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .note {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #666;
-            background: #0a0a0a;
-            padding: 15px;
-            border: 1px solid #222;
-            line-height: 1.5;
-        }
+        @keyframes pulse-animation { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        
+        .timer-text { color: var(--uber-white); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -160,7 +137,7 @@
     <div class="container">
         <header>
             <h1>UnbelievaAuto</h1>
-            <span class="version">v2.1</span>
+            <span class="version">v2.2</span>
         </header>
 
         <div class="panel">
@@ -174,32 +151,28 @@
             </div>
 
             <div class="btn-row">
-                <button id="startBtn" class="btn-start" onclick="startEngine()">START FARM</button>
+                <button id="startBtn" class="btn-start" onclick="startEngine()">START SEQUENCE</button>
                 <button id="stopBtn" class="btn-stop" onclick="stopEngine()">TERMINATE</button>
             </div>
         </div>
 
         <div class="status-box">
             <div class="stat-row">
-                <span>SYSTEM STATUS</span>
+                <span>STATUS</span>
                 <span id="status" class="stat-val">IDLE</span>
             </div>
             <div class="stat-row">
-                <span>NEXT BATCH IN</span>
-                <span id="timer" class="stat-val">-</span>
+                <span>NEXT CYCLE IN</span>
+                <span id="timer" class="stat-val timer-text">-</span>
             </div>
             <div class="stat-row">
-                <span>TOTAL CYCLES</span>
+                <span>CYCLES COMPLETED</span>
                 <span id="cycles" class="stat-val">0</span>
             </div>
              <div class="stat-row">
-                <span>LAST LOG</span>
+                <span>LOG</span>
                 <span id="log" class="stat-val" style="font-size: 11px;">-</span>
             </div>
-        </div>
-
-        <div class="note">
-            <b>NOTE:</b> This sends "/work" as text. If the bot ignores it, it means the server requires "Real Slash Interactions" (clickable commands), which this tool cannot simulate.
         </div>
     </div>
 
@@ -218,9 +191,7 @@
                     },
                     body: JSON.stringify({ content: text })
                 });
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (err) { console.error(err); }
         }
 
         function updateStatus(msg, color = "#fff") {
@@ -236,55 +207,78 @@
             document.getElementById('startBtn').style.display = "block";
             document.getElementById('stopBtn').style.display = "none";
             updateStatus("TERMINATED", "#cc0000");
-            document.getElementById('log').innerText = "Stopped by user";
+            document.getElementById('log').innerText = "Manual Stop";
+        }
+
+        // Helper to perform action and update log
+        async function performAction(token, cid, cmd, logMsg) {
+            if(!isRunning) return;
+            document.getElementById('log').innerText = logMsg;
+            await sendCommand(token, cid, cmd);
+        }
+
+        // Helper to update timer
+        function updateTimerDisplay(targetTime) {
+            const now = Date.now();
+            if (now >= targetTime) {
+                document.getElementById('timer').innerText = "0.0s";
+                return;
+            }
+            const timeLeft = ((targetTime - now) / 1000).toFixed(1);
+            document.getElementById('timer').innerText = `${timeLeft}s`;
         }
 
         async function startEngine() {
             const token = document.getElementById('token').value;
             const channelId = document.getElementById('channelId').value;
 
-            if (!token || !channelId) return alert("Please enter Token and Channel ID");
+            if (!token || !channelId) return alert("Credentials required");
 
             isRunning = true;
             document.getElementById('startBtn').style.display = "none";
             document.getElementById('stopBtn').style.display = "block";
             updateStatus("RUNNING");
             
-            try {
-                if ('wakeLock' in navigator) {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                }
-            } catch (err) {}
+            // Try Keep Screen Awake
+            try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
 
             while (isRunning) {
-                // --- EXECUTION PHASE ---
-                document.getElementById('log').innerText = "Sending: /work...";
-                await sendCommand(token, channelId, "/work");
-                
-                await new Promise(r => setTimeout(r, 200)); 
-                
-                document.getElementById('log').innerText = "Sending: /collect-income...";
-                await sendCommand(token, channelId, "/collect-income");
-                
-                await new Promise(r => setTimeout(r, 200)); 
-                
-                document.getElementById('log').innerText = "Sending: /deposit all...";
-                await sendCommand(token, channelId, "/deposit all");
+                // 1. START TIMER NOW (Overlap Logic)
+                // We want exactly 26.5s between the START of each /work
+                const cycleDuration = 26500; 
+                const nextCycleStart = Date.now() + cycleDuration;
 
+                // 2. Fire /work immediately
+                await performAction(token, channelId, "/work", "Sent /work (Timer Started)");
+                
+                // 3. Wait 2 seconds
+                // We break the 2s wait into small chunks to keep updating the timer UI
+                let waitEnd = Date.now() + 2000;
+                while(Date.now() < waitEnd && isRunning) {
+                    updateTimerDisplay(nextCycleStart);
+                    await new Promise(r => setTimeout(r, 100));
+                }
+
+                // 4. Fire /collect-income
+                await performAction(token, channelId, "/collect-income", "Sent /collect-income");
+
+                // 5. Wait 2 seconds
+                waitEnd = Date.now() + 2000;
+                while(Date.now() < waitEnd && isRunning) {
+                    updateTimerDisplay(nextCycleStart);
+                    await new Promise(r => setTimeout(r, 100));
+                }
+
+                // 6. Fire /deposit
+                await performAction(token, channelId, "/deposit all", "Sent /deposit all");
+                
                 cycleCount++;
                 document.getElementById('cycles').innerText = cycleCount;
 
-                // --- 26.5s COOLDOWN PHASE ---
-                // 26500 milliseconds = 26.5 seconds
-                const waitDuration = 26500; 
-                const targetTime = Date.now() + waitDuration;
-
-                while (Date.now() < targetTime && isRunning) {
-                    const timeLeft = Math.max(0, (targetTime - Date.now()) / 1000).toFixed(1);
-                    document.getElementById('timer').innerText = `${timeLeft}s`;
+                // 7. Wait remaining time until nextCycleStart
+                while (Date.now() < nextCycleStart && isRunning) {
                     document.getElementById('log').innerText = "Cooling down...";
-                    
-                    // Update timer every 100ms for smooth decimals
+                    updateTimerDisplay(nextCycleStart);
                     await new Promise(r => setTimeout(r, 100));
                 }
             }

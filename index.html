@@ -3,255 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UnbelievaAuto | Dashboard</title>
+    <title>UnbelievaAuto I Tera Edition</title>
     <style>
         :root {
-            --blurple: #5865F2;
-            --bg-dark: #313338;
-            --bg-deeper: #2B2D31;
-            --bg-deepest: #1E1F22;
-            --text-main: #DBDEE1;
-            --text-muted: #949BA4;
-            --success: #23A559;
-            --danger: #F23F42;
+            --apple-blue: #0071e3;
+            --apple-gray: #f5f5f7;
+            --apple-text: #1d1d1f;
+            --glass: rgba(255, 255, 255, 0.7);
         }
 
-        * { box-sizing: border-box; font-family: 'gg sans', 'Noto Sans', sans-serif; }
-        
-        body { 
-            background-color: var(--bg-dark); 
-            color: var(--text-main); 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh;
-        }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
-        .app-container {
-            width: 500px;
-            background-color: var(--bg-deeper);
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top, #ffffff, #ececec);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            color: var(--apple-text);
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .header {
-            background-color: var(--bg-deepest);
-            padding: 20px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+        }
+
+        /* --- INTRO ANIMATION --- */
+        .intro-container {
+            display: flex;
+            justify-content: center;
             align-items: center;
-            border-bottom: 1px solid rgba(0,0,0,0.2);
+            height: 100vh;
+            width: 100%;
+            position: absolute;
+            background: #fff;
+            z-index: 100;
+            animation: fadeOut 1s ease-in-out forwards;
+            animation-delay: 3s;
         }
 
-        .header h1 { font-size: 18px; margin: 0; color: #fff; }
-        .status-pill {
-            font-size: 10px;
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 4px;
-            background: var(--bg-dark);
-            color: var(--text-muted);
-            text-transform: uppercase;
+        .animated-title {
+            display: flex;
+            gap: 2px;
+            font-size: 48px;
+            font-weight: 600;
+            letter-spacing: -1px;
         }
-        .status-pill.active { background: var(--success); color: #fff; }
 
-        .content { padding: 20px; }
+        .animated-title span {
+            display: inline-block;
+            opacity: 0;
+            filter: blur(10px);
+            transform: translateY(20px);
+            animation: letterEntry 0.8s ease-out forwards;
+        }
 
-        .input-box { margin-bottom: 16px; }
-        label { display: block; font-size: 12px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
-        
+        @keyframes letterEntry {
+            to { opacity: 1; filter: blur(0); transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        /* --- MAIN LAYOUT --- */
+        .navbar {
+            height: 52px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            justify-content: space-between;
+        }
+
+        .nav-title { font-weight: 600; font-size: 18px; }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            padding: 40px;
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Left Side: Controls */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+            flex: 1;
+        }
+
+        /* Right Side: Visuals/Stats */
+        .status-panel {
+            width: 380px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .apple-input-group { margin-bottom: 24px; }
+        label { font-size: 13px; font-weight: 600; color: #86868b; margin-bottom: 8px; display: block; }
+
         input {
             width: 100%;
-            background: var(--bg-deepest);
-            border: none;
-            border-radius: 4px;
-            padding: 12px;
-            color: var(--text-main);
-            font-size: 14px;
+            height: 48px;
+            border-radius: 12px;
+            border: 1px solid #d2d2d7;
+            background: rgba(255,255,255,0.8);
+            padding: 0 16px;
+            font-size: 16px;
             outline: none;
-            transition: 0.2s;
+            transition: all 0.3s;
         }
-        input:focus { box-shadow: 0 0 0 2px var(--blurple); }
 
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        input:focus { border-color: var(--apple-blue); box-shadow: 0 0 0 4px rgba(0,113,227,0.1); }
 
-        .action-area { margin-top: 10px; display: flex; gap: 10px; }
-        
+        .btn-row { display: flex; gap: 12px; margin-top: 20px; }
+
         .btn {
             flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            font-weight: 600;
+            height: 52px;
+            border-radius: 26px;
+            font-size: 16px;
+            font-weight: 500;
             cursor: pointer;
-            transition: 0.2s;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-launch { background: var(--apple-blue); color: #fff; }
+        .btn-launch:hover { background: #0077ed; transform: scale(1.02); }
+        .btn-stop { background: #e8e8ed; color: #ff3b30; display: none; }
+
+        .stat-card {
+            background: var(--glass);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+
+        .stat-val { font-size: 32px; font-weight: 700; color: var(--apple-text); margin-top: 4px; }
+        .stat-label { font-size: 12px; font-weight: 600; color: #86868b; text-transform: uppercase; }
+
+        .log-bubble {
+            background: #fff;
+            padding: 12px 20px;
+            border-radius: 20px;
             font-size: 14px;
-        }
-        .btn-primary { background: var(--blurple); color: #fff; }
-        .btn-primary:hover { background: #4752c4; }
-        .btn-stop { background: var(--danger); color: #fff; display: none; }
-
-        .stats-panel {
-            margin-top: 20px;
-            background: var(--bg-deepest);
-            border-radius: 8px;
-            padding: 16px;
+            color: #515154;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            text-align: center;
         }
 
-        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
-        .stat-row:last-child { margin-bottom: 0; }
-        .stat-label { color: var(--text-muted); }
-        .stat-value { font-family: 'Consolas', monospace; color: var(--success); }
-
-        .log-stream {
-            margin-top: 12px;
-            height: 40px;
-            background: #000;
-            border-radius: 4px;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #aaa;
-            border-left: 3px solid var(--blurple);
-        }
+        #timer { color: var(--apple-blue); }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="header">
-        <h1>Command Center</h1>
-        <span id="pill" class="status-pill">Offline</span>
+    <div class="intro-container" id="intro">
+        <div class="animated-title" id="title-anim"></div>
     </div>
 
-    <div class="content">
-        <div class="input-box">
-            <label>User Authorization</label>
-            <input type="password" id="token" placeholder="Paste Discord Token...">
-        </div>
-
-        <div class="grid">
-            <div class="input-box">
-                <label>Channel ID</label>
-                <input type="text" id="channelId" value="1417962541702709258">
-            </div>
-            <div class="input-box">
-                <label>Guild ID</label>
-                <input type="text" id="guildId" value="1347804635989016617">
-            </div>
-        </div>
-
-        <div class="action-area">
-            <button id="startBtn" class="btn btn-primary" onclick="run()">Initiate Sequence</button>
-            <button id="stopBtn" class="btn btn-stop" onclick="kill()">Terminate</button>
-        </div>
-
-        <div class="stats-panel">
-            <div class="stat-row">
-                <span class="stat-label">Work Cooldown</span>
-                <span id="timer" class="stat-value">00.0s</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Cycles Completed</span>
-                <span id="cycles" class="stat-value">0</span>
-            </div>
-        </div>
-
-        <div id="log" class="log-stream">System idling...</div>
+    <div class="navbar">
+        <div class="nav-title">UnbelievaAuto</div>
+        <div style="font-size: 12px; color: #86868b;">Automated Productivity Engine v8.0</div>
     </div>
-</div>
 
-<script>
-    let active = false;
-    let cycleCount = 0;
+    <div class="main-content">
+        <div class="glass-card">
+            <h2 style="font-size: 32px; margin-bottom: 30px; font-weight: 600;">Control Center</h2>
+            
+            <div class="apple-input-group">
+                <label>User Authorization</label>
+                <input type="password" id="token" placeholder="Paste Discord Token">
+            </div>
 
-    const DATA = {
-        appId: "292953664492929025",
-        session: "43c7f2a6ccf5a143bfbb9196c456b071",
-        work: { id: "901118136529588281", ver: "973314412968562777" },
-        collect: { id: "901118136529588278", ver: "973314412968562774" },
-        deposit: { id: "901118136529588275", ver: "973314412968562769" }
-    };
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="apple-input-group">
+                    <label>Channel ID</label>
+                    <input type="text" id="channelId" value="1417962541702709258">
+                </div>
+                <div class="apple-input-group">
+                    <label>Guild (Server) ID</label>
+                    <input type="text" id="guildId" value="1347804635989016617">
+                </div>
+            </div>
 
-    async function slash(token, guild, channel, cmdName, cmdData, options = []) {
-        const payload = {
-            type: 2,
-            application_id: DATA.appId,
-            guild_id: guild,
-            channel_id: channel,
-            session_id: DATA.session,
-            data: {
-                version: cmdData.ver,
-                id: cmdData.id,
-                name: cmdName,
-                type: 1,
-                options: options
-            }
+            <div class="btn-row">
+                <button class="btn btn-launch" id="startBtn" onclick="run()">Launch Interaction</button>
+                <button class="btn btn-stop" id="stopBtn" onclick="stop()">End Session</button>
+            </div>
+        </div>
+
+        <div class="status-panel">
+            <div class="stat-card">
+                <div class="stat-label">Work Cooldown</div>
+                <div id="timer" class="stat-val">00.0s</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Cycles</div>
+                <div id="cycles" class="stat-val">0</div>
+            </div>
+            <div id="log" class="log-bubble">Ready for system handshake.</div>
+        </div>
+    </div>
+
+    <script>
+        // Intro Animation Setup
+        const titleText = "UnbelievaAuto";
+        const container = document.getElementById('title-anim');
+        titleText.split('').forEach((char, i) => {
+            const span = document.createElement('span');
+            span.textContent = char;
+            span.style.animationDelay = `${i * 0.1}s`;
+            container.appendChild(span);
+        });
+
+        // Logic Engine
+        let active = false;
+        let cycleCount = 0;
+
+        const CONFIG = {
+            appId: "292953664492929025",
+            session: "43c7f2a6ccf5a143bfbb9196c456b071",
+            work: { id: "901118136529588281", ver: "973314412968562777" },
+            collect: { id: "901118136529588278", ver: "973314412968562774" },
+            deposit: { id: "901118136529588275", ver: "973314412968562769" }
         };
 
-        return fetch('https://discord.com/api/v9/interactions', {
-            method: 'POST',
-            headers: { 'Authorization': token, 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-    }
+        async function postInteraction(token, guild, channel, cmdName, cmdData, options = []) {
+            const payload = {
+                type: 2,
+                application_id: CONFIG.appId,
+                guild_id: guild,
+                channel_id: channel,
+                session_id: CONFIG.session,
+                data: {
+                    version: cmdData.ver,
+                    id: cmdData.id,
+                    name: cmdName,
+                    type: 1,
+                    options: options
+                }
+            };
 
-    function logger(msg) { document.getElementById('log').innerText = msg; }
+            return fetch('https://discord.com/api/v9/interactions', {
+                method: 'POST',
+                headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        }
 
-    function kill() {
-        active = false;
-        document.getElementById('startBtn').style.display = "block";
-        document.getElementById('stopBtn').style.display = "none";
-        document.getElementById('pill').classList.remove('active');
-        document.getElementById('pill').innerText = "Offline";
-        logger("Process terminated.");
-    }
+        function logger(msg) { document.getElementById('log').innerText = msg; }
 
-    async function run() {
-        const token = document.getElementById('token').value;
-        const gID = document.getElementById('guildId').value;
-        const cID = document.getElementById('channelId').value;
-        
-        if(!token) return alert("Authorization Required");
+        function stop() {
+            active = false;
+            document.getElementById('startBtn').style.display = "block";
+            document.getElementById('stopBtn').style.display = "none";
+            logger("Session terminated.");
+        }
 
-        active = true;
-        document.getElementById('startBtn').style.display = "none";
-        document.getElementById('stopBtn').style.display = "block";
-        document.getElementById('pill').classList.add('active');
-        document.getElementById('pill').innerText = "Online";
+        async function run() {
+            const token = document.getElementById('token').value;
+            const gID = document.getElementById('guildId').value;
+            const cID = document.getElementById('channelId').value;
+            if(!token) return alert("Enter Authorization Token");
 
-        while(active) {
-            // Precision Logic: Cooldown target set immediately
-            let target = Date.now() + 26150; 
-            
-            logger("Sending: /work");
-            await slash(token, gID, cID, "work", DATA.work);
+            active = true;
+            document.getElementById('startBtn').style.display = "none";
+            document.getElementById('stopBtn').style.display = "block";
 
-            await new Promise(r => setTimeout(r, 100)); // 0.1s wait
+            while(active) {
+                let cooldownTarget = Date.now() + 26100;
+                
+                logger("Requesting: /work");
+                await postInteraction(token, gID, cID, "work", CONFIG.work);
 
-            logger("Sending: /collect-income");
-            await slash(token, gID, cID, "collect-income", DATA.collect);
+                await new Promise(r => setTimeout(r, 100));
 
-            await new Promise(r => setTimeout(r, 100)); // 0.1s wait
+                logger("Requesting: /collect-income");
+                await postInteraction(token, gID, cID, "collect-income", CONFIG.collect);
 
-            logger("Sending: /deposit all");
-            await slash(token, gID, cID, "deposit", DATA.deposit, [{type: 3, name: "amount", value: "all"}]);
+                await new Promise(r => setTimeout(r, 100));
 
-            cycleCount++;
-            document.getElementById('cycles').innerText = cycleCount;
+                logger("Requesting: /deposit");
+                await postInteraction(token, gID, cID, "deposit", CONFIG.deposit, [{type: 3, name: "amount", value: "all"}]);
 
-            // Cooldown remainder
-            while(Date.now() < target && active) {
-                let diff = ((target - Date.now()) / 1000).toFixed(1);
-                document.getElementById('timer').innerText = diff + "s";
-                await new Promise(r => setTimeout(r, 50));
+                cycleCount++;
+                document.getElementById('cycles').innerText = cycleCount;
+
+                while(Date.now() < cooldownTarget && active) {
+                    let rem = ((cooldownTarget - Date.now()) / 1000).toFixed(1);
+                    document.getElementById('timer').innerText = rem + "s";
+                    await new Promise(r => setTimeout(r, 50));
+                }
             }
         }
-    }
-</script>
+    </script>
 </body>
 </html>

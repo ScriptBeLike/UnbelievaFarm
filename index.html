@@ -3,57 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UnbelievaAuto v5</title>
+    <title>UnbelievaAuto | Dashboard</title>
     <style>
-        :root { --bg: #000; --card: #080808; --uber-white: #fff; --uber-gray: #444; }
-        * { box-sizing: border-box; font-family: "Uber Move", sans-serif; }
-        body { background: var(--bg); color: #fff; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .terminal { width: 440px; padding: 40px; background: var(--bg); border: 1px solid #111; }
-        header { border-bottom: 2px solid #fff; padding-bottom: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: baseline; }
-        .v2-small { font-size: 10px; font-weight: 800; color: var(--uber-gray); text-transform: uppercase; letter-spacing: 2px; }
-        .input-wrap { margin-bottom: 15px; }
-        label { font-size: 10px; color: var(--uber-gray); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; display: block; }
-        input { width: 100%; background: var(--card); border: 1px solid #1a1a1a; color: #fff; padding: 14px; font-size: 13px; outline: none; }
-        input:focus { border-color: #fff; }
-        .btn-launch { width: 100%; padding: 20px; background: #fff; color: #000; font-weight: 700; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 10px; }
-        .dashboard { margin-top: 35px; border-top: 1px solid #111; padding-top: 20px; }
-        .row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; }
-        .label-dim { color: var(--uber-gray); font-weight: 700; text-transform: uppercase; }
-        .val-bright { font-family: monospace; font-weight: 700; }
-        #log { font-size: 11px; color: #555; text-align: center; margin-top: 15px; font-family: monospace; }
+        :root {
+            --blurple: #5865F2;
+            --bg-dark: #313338;
+            --bg-deeper: #2B2D31;
+            --bg-deepest: #1E1F22;
+            --text-main: #DBDEE1;
+            --text-muted: #949BA4;
+            --success: #23A559;
+            --danger: #F23F42;
+        }
+
+        * { box-sizing: border-box; font-family: 'gg sans', 'Noto Sans', sans-serif; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 500px;
+            background-color: var(--bg-deeper);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .header {
+            background-color: var(--bg-deepest);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.2);
+        }
+
+        .header h1 { font-size: 18px; margin: 0; color: #fff; }
+        .status-pill {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: var(--bg-dark);
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .status-pill.active { background: var(--success); color: #fff; }
+
+        .content { padding: 20px; }
+
+        .input-box { margin-bottom: 16px; }
+        label { display: block; font-size: 12px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        
+        input {
+            width: 100%;
+            background: var(--bg-deepest);
+            border: none;
+            border-radius: 4px;
+            padding: 12px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+        input:focus { box-shadow: 0 0 0 2px var(--blurple); }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .action-area { margin-top: 10px; display: flex; gap: 10px; }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+        .btn-primary { background: var(--blurple); color: #fff; }
+        .btn-primary:hover { background: #4752c4; }
+        .btn-stop { background: var(--danger); color: #fff; display: none; }
+
+        .stats-panel {
+            margin-top: 20px;
+            background: var(--bg-deepest);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+        .stat-row:last-child { margin-bottom: 0; }
+        .stat-label { color: var(--text-muted); }
+        .stat-value { font-family: 'Consolas', monospace; color: var(--success); }
+
+        .log-stream {
+            margin-top: 12px;
+            height: 40px;
+            background: #000;
+            border-radius: 4px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            border-left: 3px solid var(--blurple);
+        }
     </style>
 </head>
 <body>
 
-<div class="terminal">
-    <header>
-        <div style="font-size: 26px; font-weight: 500; letter-spacing: -1px;">UnbelievaAuto</div>
-        <span class="v2-small">v5 Immed-Start</span>
-    </header>
-
-    <div class="input-wrap">
-        <label>Access Token</label>
-        <input type="password" id="token" placeholder="Paste Token">
+<div class="app-container">
+    <div class="header">
+        <h1>Command Center</h1>
+        <span id="pill" class="status-pill">Offline</span>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-        <div class="input-wrap">
-            <label>Channel ID</label>
-            <input type="text" id="channelId" value="1417962541702709258">
+    <div class="content">
+        <div class="input-box">
+            <label>User Authorization</label>
+            <input type="password" id="token" placeholder="Paste Discord Token...">
         </div>
-        <div class="input-wrap">
-            <label>Guild ID</label>
-            <input type="text" id="guildId" value="1347804635989016617">
+
+        <div class="grid">
+            <div class="input-box">
+                <label>Channel ID</label>
+                <input type="text" id="channelId" value="1417962541702709258">
+            </div>
+            <div class="input-box">
+                <label>Guild ID</label>
+                <input type="text" id="guildId" value="1347804635989016617">
+            </div>
         </div>
-    </div>
 
-    <button class="btn-launch" onclick="startEngine()">Launch Engine</button>
+        <div class="action-area">
+            <button id="startBtn" class="btn btn-primary" onclick="run()">Initiate Sequence</button>
+            <button id="stopBtn" class="btn btn-stop" onclick="kill()">Terminate</button>
+        </div>
 
-    <div class="dashboard">
-        <div class="row"><span class="label-dim">System Status</span><span id="status" class="val-bright">IDLE</span></div>
-        <div class="row"><span class="label-dim">Cooldown Countdown</span><span id="timer" class="val-bright">-</span></div>
-        <div class="row"><span class="label-dim">Total Cycles</span><span id="cycles" class="val-bright">0</span></div>
-        <div id="log">Ready to bridge interactions...</div>
+        <div class="stats-panel">
+            <div class="stat-row">
+                <span class="stat-label">Work Cooldown</span>
+                <span id="timer" class="stat-value">00.0s</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Cycles Completed</span>
+                <span id="cycles" class="stat-value">0</span>
+            </div>
+        </div>
+
+        <div id="log" class="log-stream">System idling...</div>
     </div>
 </div>
 
@@ -61,7 +169,7 @@
     let active = false;
     let cycleCount = 0;
 
-    const COMMANDS = {
+    const DATA = {
         appId: "292953664492929025",
         session: "43c7f2a6ccf5a143bfbb9196c456b071",
         work: { id: "901118136529588281", ver: "973314412968562777" },
@@ -69,13 +177,13 @@
         deposit: { id: "901118136529588275", ver: "973314412968562769" }
     };
 
-    async function discordInteraction(token, guild, channel, cmdName, cmdData, options = []) {
+    async function slash(token, guild, channel, cmdName, cmdData, options = []) {
         const payload = {
             type: 2,
-            application_id: COMMANDS.appId,
+            application_id: DATA.appId,
             guild_id: guild,
             channel_id: channel,
-            session_id: COMMANDS.session,
+            session_id: DATA.session,
             data: {
                 version: cmdData.ver,
                 id: cmdData.id,
@@ -92,40 +200,55 @@
         });
     }
 
-    async function startEngine() {
+    function logger(msg) { document.getElementById('log').innerText = msg; }
+
+    function kill() {
+        active = false;
+        document.getElementById('startBtn').style.display = "block";
+        document.getElementById('stopBtn').style.display = "none";
+        document.getElementById('pill').classList.remove('active');
+        document.getElementById('pill').innerText = "Offline";
+        logger("Process terminated.");
+    }
+
+    async function run() {
         const token = document.getElementById('token').value;
         const gID = document.getElementById('guildId').value;
         const cID = document.getElementById('channelId').value;
-        if(!token) return alert("Paste Token");
+        
+        if(!token) return alert("Authorization Required");
 
         active = true;
-        document.getElementById('status').innerText = "RUNNING";
+        document.getElementById('startBtn').style.display = "none";
+        document.getElementById('stopBtn').style.display = "block";
+        document.getElementById('pill').classList.add('active');
+        document.getElementById('pill').innerText = "Online";
 
         while(active) {
-            // STEP 1: IMMEDIATELY TRIGGER /WORK AND START TIMER
-            let cooldownStart = Date.now();
-            let nextRun = cooldownStart + 26500; // 26.5s total wait
+            // Precision Logic: Cooldown target set immediately
+            let target = Date.now() + 26150; 
+            
+            logger("Sending: /work");
+            await slash(token, gID, cID, "work", DATA.work);
 
-            document.getElementById('log').innerText = "Interaction: /work sent";
-            await discordInteraction(token, gID, cID, "work", COMMANDS.work);
+            await new Promise(r => setTimeout(r, 100)); // 0.1s wait
 
-            // STEP 2: RUN OTHER COMMANDS WHILE TIMER IS TICKING
-            await new Promise(r => setTimeout(r, 2000));
-            document.getElementById('log').innerText = "Interaction: /collect-income sent";
-            await discordInteraction(token, gID, cID, "collect-income", COMMANDS.collect);
+            logger("Sending: /collect-income");
+            await slash(token, gID, cID, "collect-income", DATA.collect);
 
-            await new Promise(r => setTimeout(r, 2000));
-            document.getElementById('log').innerText = "Interaction: /deposit sent";
-            await discordInteraction(token, gID, cID, "deposit", COMMANDS.deposit, [{type: 3, name: "amount", value: "all"}]);
+            await new Promise(r => setTimeout(r, 100)); // 0.1s wait
+
+            logger("Sending: /deposit all");
+            await slash(token, gID, cID, "deposit", DATA.deposit, [{type: 3, name: "amount", value: "all"}]);
 
             cycleCount++;
             document.getElementById('cycles').innerText = cycleCount;
 
-            // STEP 3: WAIT FOR THE REMAINING TIME OF THE 26.5s
-            while(Date.now() < nextRun && active) {
-                document.getElementById('log').innerText = "Waiting for cooldown reset...";
-                document.getElementById('timer').innerText = ((nextRun - Date.now()) / 1000).toFixed(1) + "s";
-                await new Promise(r => setTimeout(r, 100));
+            // Cooldown remainder
+            while(Date.now() < target && active) {
+                let diff = ((target - Date.now()) / 1000).toFixed(1);
+                document.getElementById('timer').innerText = diff + "s";
+                await new Promise(r => setTimeout(r, 50));
             }
         }
     }

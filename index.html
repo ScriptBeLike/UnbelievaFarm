@@ -3,286 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UnbelievaAuto v2.2</title>
+    <title>UnbelievaAuto v2</title>
     <style>
         :root {
             --bg: #000000;
-            --surface: #111111;
+            --card: #080808;
             --uber-white: #ffffff;
-            --uber-gray: #a6a6a6;
-            --border: #333333;
+            --uber-gray: #555555;
+            --border: #1a1a1a;
         }
 
-        * {
-            box-sizing: border-box;
-            font-family: "Uber Move Text", system-ui, -apple-system, sans-serif;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--uber-white);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        * { box-sizing: border-box; font-family: "Uber Move Text", "system-ui", sans-serif; -webkit-font-smoothing: antialiased; }
+        
+        body { 
+            background-color: var(--bg); 
+            color: var(--uber-white); 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
             min-height: 100vh;
         }
 
-        .container {
+        .terminal {
             width: 100%;
-            max-width: 480px;
+            max-width: 460px;
             padding: 40px;
+            background: var(--bg);
         }
 
         header {
-            margin-bottom: 40px;
-            border-bottom: 2px solid var(--uber-white);
+            border-bottom: 1px solid var(--uber-white);
             padding-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
+            margin-bottom: 40px;
         }
 
-        h1 {
-            font-size: 32px;
-            font-weight: 500;
-            margin: 0;
-            letter-spacing: -1px;
-            line-height: 1;
-        }
+        .title-group { display: flex; align-items: baseline; gap: 10px; }
+        h1 { font-size: 28px; font-weight: 500; margin: 0; letter-spacing: -1px; }
+        .v2-tag { font-size: 10px; font-weight: 800; color: var(--uber-gray); text-transform: uppercase; letter-spacing: 2px; }
 
-        .version {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--uber-gray);
-            margin-bottom: 2px;
-        }
-
-        .panel {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        label {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--uber-gray);
-            margin-left: 2px;
-        }
-
-        input {
-            width: 100%;
-            background-color: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--uber-white);
-            padding: 16px;
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        input:focus { border-color: var(--uber-white); }
-
-        .btn-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        button {
-            flex: 1;
-            padding: 18px;
-            font-size: 16px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-start { background-color: var(--uber-white); color: var(--bg); }
-        .btn-stop { background-color: transparent; border: 2px solid #cc0000; color: #cc0000; display: none; }
-
-        .status-box {
-            margin-top: 40px;
-            border-top: 1px solid var(--border);
-            padding-top: 20px;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: var(--uber-gray);
-        }
-
-        .stat-val {
-            color: var(--uber-white);
-            font-family: monospace;
-            font-weight: 700;
-        }
-
-        .pulse { animation: pulse-animation 2s infinite; }
-        @keyframes pulse-animation { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .input-wrap { margin-bottom: 20px; }
+        label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--uber-gray); display: block; margin-bottom: 8px; }
         
-        .timer-text { color: var(--uber-white); font-weight: bold; }
+        input { 
+            width: 100%; 
+            background: var(--card); 
+            border: 1px solid var(--border); 
+            color: #fff; 
+            padding: 18px; 
+            font-size: 15px; 
+            outline: none; 
+            transition: 0.3s;
+        }
+        input:focus { border-color: #fff; background: #0c0c0c; }
+
+        .btn-start { 
+            width: 100%; 
+            padding: 20px; 
+            background: #fff; 
+            color: #000; 
+            border: none; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            cursor: pointer; 
+            letter-spacing: 1.5px; 
+            transition: 0.2s;
+        }
+        .btn-start:hover { opacity: 0.8; }
+
+        .btn-stop { 
+            width: 100%; 
+            padding: 20px; 
+            background: transparent; 
+            border: 1px solid #333; 
+            color: #ff3b30; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            cursor: pointer; 
+            display: none; 
+            margin-top: 10px; 
+        }
+
+        .monitor { 
+            margin-top: 40px; 
+            padding: 25px; 
+            background: var(--card); 
+            border: 1px solid var(--border);
+        }
+
+        .stat { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; letter-spacing: 0.5px; }
+        .dim { color: var(--uber-gray); font-weight: 700; text-transform: uppercase; }
+        .bright { color: #fff; font-family: monospace; font-weight: 700; }
+        
+        #log { 
+            margin-top: 15px; 
+            font-family: monospace; 
+            font-size: 11px; 
+            color: #444; 
+            border-top: 1px solid #1a1a1a; 
+            padding-top: 10px;
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .pulse { animation: pulse-red 2s infinite; }
+        @keyframes pulse-red { 0% { color: #fff; } 50% { color: #555; } 100% { color: #fff; } }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
+<div class="terminal">
+    <header>
+        <div class="title-group">
             <h1>UnbelievaAuto</h1>
-            <span class="version">v2.2</span>
-        </header>
-
-        <div class="panel">
-            <div>
-                <label>Auth Token</label>
-                <input type="password" id="token" placeholder="Paste Discord Token">
-            </div>
-            <div>
-                <label>Channel ID</label>
-                <input type="text" id="channelId" placeholder="Paste Channel ID">
-            </div>
-
-            <div class="btn-row">
-                <button id="startBtn" class="btn-start" onclick="startEngine()">START SEQUENCE</button>
-                <button id="stopBtn" class="btn-stop" onclick="stopEngine()">TERMINATE</button>
-            </div>
+            <span class="v2-tag">v2</span>
         </div>
+    </header>
 
-        <div class="status-box">
-            <div class="stat-row">
-                <span>STATUS</span>
-                <span id="status" class="stat-val">IDLE</span>
-            </div>
-            <div class="stat-row">
-                <span>NEXT CYCLE IN</span>
-                <span id="timer" class="stat-val timer-text">-</span>
-            </div>
-            <div class="stat-row">
-                <span>CYCLES COMPLETED</span>
-                <span id="cycles" class="stat-val">0</span>
-            </div>
-             <div class="stat-row">
-                <span>LOG</span>
-                <span id="log" class="stat-val" style="font-size: 11px;">-</span>
-            </div>
-        </div>
+    <div class="input-wrap">
+        <label>Access Token</label>
+        <input type="password" id="token" placeholder="Paste Token">
+    </div>
+    <div class="input-wrap">
+        <label>Channel ID</label>
+        <input type="text" id="channelId" placeholder="Paste ID">
     </div>
 
-    <script>
-        let isRunning = false;
-        let cycleCount = 0;
-        let wakeLock = null;
+    <button id="startBtn" class="btn-start" onclick="init()">Launch Session</button>
+    <button id="stopBtn" class="btn-stop" onclick="stop()">Terminate</button>
 
-        async function sendCommand(token, channelId, text) {
-            try {
-                await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ content: text })
-                });
-            } catch (err) { console.error(err); }
-        }
+    <div class="monitor">
+        <div class="stat">
+            <span class="dim">System Status</span>
+            <span id="status" class="bright">IDLE</span>
+        </div>
+        <div class="stat">
+            <span class="dim">Next Sequence</span>
+            <span id="timer" class="bright">-</span>
+        </div>
+        <div class="stat">
+            <span class="dim">Cycle Count</span>
+            <span id="cycles" class="bright">0</span>
+        </div>
+        <div id="log">Awaiting authentication...</div>
+    </div>
+</div>
 
-        function updateStatus(msg, color = "#fff") {
-            const el = document.getElementById('status');
-            el.innerText = msg;
-            el.style.color = color;
-            if(msg === "RUNNING") el.classList.add('pulse');
-            else el.classList.remove('pulse');
-        }
+<script>
+    let running = false;
+    let cycleCount = 0;
 
-        function stopEngine() {
-            isRunning = false;
-            document.getElementById('startBtn').style.display = "block";
-            document.getElementById('stopBtn').style.display = "none";
-            updateStatus("TERMINATED", "#cc0000");
-            document.getElementById('log').innerText = "Manual Stop";
-        }
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
-        // Helper to perform action and update log
-        async function performAction(token, cid, cmd, logMsg) {
-            if(!isRunning) return;
-            document.getElementById('log').innerText = logMsg;
-            await sendCommand(token, cid, cmd);
-        }
+    async function discordSend(token, cid, msg) {
+        try {
+            await fetch(`https://discord.com/api/v9/channels/${cid}/messages`, {
+                method: 'POST',
+                headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: msg })
+            });
+        } catch (e) {}
+    }
 
-        // Helper to update timer
-        function updateTimerDisplay(targetTime) {
-            const now = Date.now();
-            if (now >= targetTime) {
-                document.getElementById('timer').innerText = "0.0s";
-                return;
-            }
-            const timeLeft = ((targetTime - now) / 1000).toFixed(1);
-            document.getElementById('timer').innerText = `${timeLeft}s`;
-        }
+    function log(m) { document.getElementById('log').innerText = m; }
 
-        async function startEngine() {
-            const token = document.getElementById('token').value;
-            const channelId = document.getElementById('channelId').value;
+    async function runSequence() {
+        const token = document.getElementById('token').value;
+        const cid = document.getElementById('channelId').value;
 
-            if (!token || !channelId) return alert("Credentials required");
-
-            isRunning = true;
-            document.getElementById('startBtn').style.display = "none";
-            document.getElementById('stopBtn').style.display = "block";
-            updateStatus("RUNNING");
+        while(running) {
+            // 1. Start Work
+            log("Executing: /work");
+            await discordSend(token, cid, "/work");
             
-            // Try Keep Screen Awake
-            try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+            // 2. Wait 2 seconds (per instructions)
+            await sleep(2000);
+            
+            // 3. Collect
+            log("Executing: /collect-income");
+            await discordSend(token, cid, "/collect-income");
+            
+            // 4. Wait 2 seconds
+            await sleep(2000);
+            
+            // 5. Deposit
+            log("Executing: /deposit all");
+            await discordSend(token, cid, "/deposit all");
+            
+            cycleCount++;
+            document.getElementById('cycles').innerText = cycleCount;
 
-            while (isRunning) {
-                // 1. START TIMER NOW (Overlap Logic)
-                // We want exactly 26.5s between the START of each /work
-                const cycleDuration = 26500; 
-                const nextCycleStart = Date.now() + cycleDuration;
-
-                // 2. Fire /work immediately
-                await performAction(token, channelId, "/work", "Sent /work (Timer Started)");
-                
-                // 3. Wait 2 seconds
-                // We break the 2s wait into small chunks to keep updating the timer UI
-                let waitEnd = Date.now() + 2000;
-                while(Date.now() < waitEnd && isRunning) {
-                    updateTimerDisplay(nextCycleStart);
-                    await new Promise(r => setTimeout(r, 100));
-                }
-
-                // 4. Fire /collect-income
-                await performAction(token, channelId, "/collect-income", "Sent /collect-income");
-
-                // 5. Wait 2 seconds
-                waitEnd = Date.now() + 2000;
-                while(Date.now() < waitEnd && isRunning) {
-                    updateTimerDisplay(nextCycleStart);
-                    await new Promise(r => setTimeout(r, 100));
-                }
-
-                // 6. Fire /deposit
-                await performAction(token, channelId, "/deposit all", "Sent /deposit all");
-                
-                cycleCount++;
-                document.getElementById('cycles').innerText = cycleCount;
-
-                // 7. Wait remaining time until nextCycleStart
-                while (Date.now() < nextCycleStart && isRunning) {
-                    document.getElementById('log').innerText = "Cooling down...";
-                    updateTimerDisplay(nextCycleStart);
-                    await new Promise(r => setTimeout(r, 100));
-                }
+            // 6. 26 Second Cooldown
+            let target = Date.now() + 26000;
+            log("Sequence Complete. Cooling down.");
+            
+            while(Date.now() < target && running) {
+                let remain = ((target - Date.now()) / 1000).toFixed(1);
+                document.getElementById('timer').innerText = `${remain}s`;
+                await sleep(100);
             }
         }
-    </script>
+    }
+
+    function init() {
+        if(!document.getElementById('token').value || !document.getElementById('channelId').value) return;
+        running = true;
+        document.getElementById('startBtn').style.display = "none";
+        document.getElementById('stopBtn').style.display = "block";
+        document.getElementById('status').innerText = "RUNNING";
+        document.getElementById('status').classList.add('pulse');
+        runSequence();
+    }
+
+    function stop() {
+        running = false;
+        document.getElementById('startBtn').style.display = "block";
+        document.getElementById('stopBtn').style.display = "none";
+        document.getElementById('status').innerText = "IDLE";
+        document.getElementById('status').classList.remove('pulse');
+        document.getElementById('timer').innerText = "-";
+        log("Terminal Stopped.");
+    }
+</script>
+
 </body>
 </html>
